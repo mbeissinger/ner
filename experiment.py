@@ -15,8 +15,8 @@ from opendeep.optimization import RMSProp
 from opendeep.utils.misc import numpy_one_hot
 
 
-def find_txt_files(dir='data/'):
-    for root, dirs, files in os.walk(dir):
+def find_txt_files(data_dir='data/'):
+    for root, dirs, files in os.walk(data_dir):
         for basename in files:
             name, ext = os.path.splitext(basename)
             if ext == ".txt":
@@ -28,7 +28,10 @@ def is_label(val):
         int(val)
         return False
     except ValueError:
-        return True
+        if str(val) == "O":
+            return False
+        else:
+            return True
 
 class CharsNER(Dataset):
     """
@@ -61,6 +64,7 @@ class CharsNER(Dataset):
                     # if the character doesn't exist yet, add it to the vocab dict.
                     for line in lines:
                         chars, label = line.split('\t', 1)
+                        label = label.split('\n', 1)[0]
                         # first, deal with the label if it is not 0.
                         if is_label(label):
                             if label not in self.entity_vocab:
@@ -86,6 +90,8 @@ class CharsNER(Dataset):
         data = numpy_one_hot(numpy.asarray(data), n_classes=numpy.amax(self.vocab.values()) + 1)
         labels = numpy_one_hot(numpy.asarray(labels), n_classes=numpy.amax(self.entity_vocab.values()) + 1)
         print("Conversion done!")
+        print("Vocab: %s" % str(sorted(self.vocab.keys())))
+        print("Labels: %s" % str(sorted(self.entity_vocab.keys())))
         print("Dataset size:\t%s" % str(data.shape))
         print("Label size:\t%s" % str(labels.shape))
 
