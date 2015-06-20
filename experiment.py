@@ -6,10 +6,11 @@ from __future__ import print_function, division
 import os
 import math
 import numpy
+import theano.tensor as T
 # opendeep imports
 import opendeep
 from opendeep.data import Dataset, TRAIN, VALID, TEST
-from opendeep.models import LSTM, SoftmaxLayer, Prototype
+from opendeep.models import LSTM
 from opendeep.monitor import Monitor, Plot
 from opendeep.optimization import RMSProp
 from opendeep.utils.misc import numpy_one_hot
@@ -37,7 +38,7 @@ class CharsNER(Dataset):
     """
     Need to process the .txt files with tagged tokens into character arrays as the dataset.
     """
-    def __init__(self, sequence_length=500, train_split=0.75, valid_split=0.15):
+    def __init__(self, sequence_length=100, train_split=0.85, valid_split=0.1):
         # for splitting the data into training, validation, and test sets.
         assert (0. < train_split <= 1.), "Train_split needs to be a fraction between (0, 1]."
         assert (0. <= valid_split < 1.), "Valid_split needs to be a fraction between [0, 1)."
@@ -98,14 +99,14 @@ class CharsNER(Dataset):
         print("Dividing into sequences of length %d..." % sequence_length)
         # first make sure to chop off the remainder of the data so sequence_length can divide evenly into data.
         length, self.vocab_size = data.shape
-        _, label_size = labels.shape
+        _, self.label_size = labels.shape
         if length % sequence_length != 0:
             print("Chopping off %d characters!" % (length % sequence_length))
             data = data[:sequence_length * math.floor(length / sequence_length)]
             labels = labels[:sequence_length * math.floor(length / sequence_length)]
         # now create the 3D tensor of sequences - they will be (num_sequences, sequence_size, vocab_size)
         data = numpy.reshape(data, (length / sequence_length, sequence_length, self.vocab_size))
-        labels = numpy.reshape(labels, (length / sequence_length, sequence_length, label_size))
+        labels = numpy.reshape(labels, (length / sequence_length, sequence_length, self.label_size))
         print("Dataset size:\t%s" % str(data.shape))
         print("Label size:\t%s" % str(labels.shape))
 
@@ -169,7 +170,51 @@ class CharsNER(Dataset):
 def main():
     dataset = CharsNER()
 
+    # define our model! we are using lstm.
+    hidden_size = 128
 
+    lstm = LSTM(input_size=dataset.vocab_size,
+                hidden_size=hidden_size,
+                output_size=dataset.label_size,
+                hidden_activation='tanh',
+                inner_hidden_activation='sigmoid',
+                activation='softmax',
+                weights_init='uniform',
+                weights_interval='montreal',
+                r_weights_init='orthogonal',
+                clip_recurrent_grads=5.,
+                noise=False,
+                noise_level=0.2,
+                direction='bidirectional',
+                cost_function='nll')
+
+    # output is in shape (n_timesteps, n_sequences, data_dim)
+
+    # calculate the mean prediction error over timesteps and batches
+    predictions = T.argmax(lstm.get_outputs(), axis=2)
+    actual = T.argmax(lstm.get_targets(), axis=2)
+    error = T.mean(T.neq(predictions, actual))
+
+    # optimizer
+    optimizer = RMSProp(dataset=dataset,
+                        model=lstm,
+                        n_epoch=500,
+                        batch_size=25,
+                        save_frequency=10,
+                        learning_rate=2e-3,
+                        lr_decay="exponential",
+                        lr_factor=0.95,
+                        grad_clip=None,
+                        hard_clip=False
+                        )
+
+    # monitors
+    errors = Monitor(name='error', expression=error, train=True, valid=True, test=True)
+
+    # plot the monitor
+    plot = Plot('Chars', monitor_channels=[errors], open_browser=True)
+
+    optimizer.train(plot=plot)
 
 
 if __name__ == "__main__":
