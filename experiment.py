@@ -9,7 +9,7 @@ import numpy
 import theano.tensor as T
 # opendeep imports
 import opendeep
-from opendeep.data import Dataset, TRAIN, VALID, TEST
+from opendeep.data import Dataset, NumpyBatches, TRAIN, VALID, TEST
 from opendeep.models import LSTM
 from opendeep.monitor import Monitor, Plot
 from opendeep.optimization import RMSProp
@@ -117,54 +117,36 @@ class CharsNER(Dataset):
         data = data[shuffle_order]
         labels = labels[shuffle_order]
 
-        self._train_len = int(math.floor(length * train_split))
-        self._valid_len = int(math.floor(length * valid_split))
-        self._test_len = int(max(length - self._valid_len - self._train_len, 0))
-        self._seq_len = sequence_length
+        _train_len = int(math.floor(length * train_split))
+        _valid_len = int(math.floor(length * valid_split))
+        _test_len = int(math.floor(length * test_split))
 
         # divide into train, valid, and test sets!
-        self.train_X = opendeep.dataset_shared(data[:self._train_len], name='chars_train_x', borrow=True)
-        self.train_Y = opendeep.dataset_shared(labels[:self._train_len], name='chars_train_y', borrow=True)
+        train_X = data[:_train_len]
+        train_Y = labels[:_train_len]
 
-        if valid_split > 0:
-            self.valid_X = opendeep.dataset_shared(data[self._train_len:self._train_len + self._valid_len],
-                                                   name='chars_valid_x', borrow=True)
-            self.valid_Y = opendeep.dataset_shared(labels[self._train_len:self._train_len + self._valid_len],
-                                                   name='chars_valid_y', borrow=True)
+        if _valid_len > 0:
+            valid_X = data[_train_len:_train_len + _valid_len]
+            valid_Y = labels[_train_len:_train_len + _valid_len]
         else:
-            self.valid_X = None
-            self.valid_Y = None
+            valid_X = None
+            valid_Y = None
 
-        if test_split > 0:
-            self.test_X = opendeep.dataset_shared(data[self._train_len + self._valid_len:],
-                                                  name='chars_test_x', borrow=True)
-            self.test_Y = opendeep.dataset_shared(labels[self._train_len + self._valid_len:],
-                                                  name='chars_test_y', borrow=True)
+        if _test_len > 0:
+            test_X = data[_train_len + _valid_len:]
+            test_Y = labels[_train_len + _valid_len:]
         else:
-            self.test_X = None
-            self.test_Y = None
+            test_X = None
+            test_Y = None
+
+        self.datasets = {TRAIN: [train_X, train_Y], VALID: [valid_X, valid_Y], TEST: [test_X, test_Y]}
 
         print("Dataset initialized!")
 
-    def getSubset(self, subset):
-        if subset is TRAIN:
-            return self.train_X, self.train_Y
-        elif subset is VALID:
-            return self.valid_X, self.valid_Y
-        elif subset is TEST:
-            return self.test_X, self.test_Y
-        else:
-            return None, None
-
-    def getDataShape(self, subset):
-        if subset is TRAIN:
-            return self._train_len, self._seq_len, self.vocab_size
-        elif subset is VALID:
-            return self._valid_len, self._seq_len, self.vocab_size
-        elif subset is TEST:
-            return self._test_len, self._seq_len, self.vocab_size
-        else:
-            return None
+    def get_subset(self, subset, batch_size=1, min_batch_size=1):
+        # return the appropriately sized iterator over the subset
+        x, y = [NumpyBatches(data, batch_size, min_batch_size) if data else None for data in self.datasets[subset]]
+        return x, y
 
 
 def main():
