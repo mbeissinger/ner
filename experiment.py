@@ -180,7 +180,7 @@ def main():
                 weights_interval='montreal',
                 r_weights_init='orthogonal',
                 clip_recurrent_grads=5.,
-                noise=False,
+                noise='dropout',
                 noise_level=0.2,
                 direction='bidirectional',
                 cost_function='nll',
