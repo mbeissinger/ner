@@ -7,6 +7,7 @@ import os
 import math
 import numpy
 import theano.tensor as T
+import pickle
 # opendeep imports
 import opendeep
 from opendeep.data import MemoryDataset
@@ -165,10 +166,10 @@ def getCharsDataset(sequence_length=100, train_split=0.85, valid_split=0.1):
 
 
 def main():
-    dataset, vocab_size, label_size = getCharsDataset(sequence_length=100)
+    dataset, vocab_size, label_size = getCharsDataset(sequence_length=200)
 
     # define our model! we are using lstm.
-    hidden_size = 64
+    hidden_size = 128
 
     lstm = LSTM(input_size=vocab_size,
                 hidden_size=hidden_size,
@@ -181,7 +182,7 @@ def main():
                 r_weights_init='orthogonal',
                 clip_recurrent_grads=5.,
                 noise='dropout',
-                noise_level=0.2,
+                noise_level=0.5,
                 direction='bidirectional',
                 cost_function='nll',
                 cost_args={'one_hot': True})
@@ -197,7 +198,7 @@ def main():
     optimizer = RMSProp(dataset=dataset,
                         model=lstm,
                         n_epoch=500,
-                        batch_size=300,
+                        batch_size=100,
                         save_frequency=10,
                         learning_rate=2e-3,
                         lr_decay="exponential",
@@ -219,4 +220,7 @@ if __name__ == "__main__":
     # if you want debugging output from opendeep
     opendeep.config_root_logger()
     # run the experiment!
-    main()
+    # main()
+    with open('outputs/lstm_2/lstm_config.pkl') as f:
+        a = pickle.load(f)
+    print(a)

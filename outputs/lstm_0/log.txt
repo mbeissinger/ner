@@ -1,0 +1,652 @@
+/usr/bin/python2.7 /home/markus/Github/ner/experiment.py
+Using gpu device 0: GeForce GTX 780
+Processing files (this loads everything into memory)...
+Converting characters and labels to one-hot vectors...
+Conversion done!
+Vocab: [' ', '!', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\\', ']', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '|', '~']
+Labels: ['N/A', 'company', 'smartphone', 'tablet']
+Dataset size:	(10386916, 91)
+Label size:	(10386916, 4)
+Dividing into sequences of length 100...
+Chopping off 16 characters!
+Dataset size:	(103869, 100, 91)
+Label size:	(103869, 100, 4)
+Percent of training characters that are entities: 0.0380343874592
+Percent of validation characters that are entities: 0.0394588869632
+Percent of testing characters that are entities: 0.0382983638114
+Overall percent of characters that are entities: 0.0381900278235
+2015-06-25 12:53:52,766 - opendeep.data.dataset_memory - INFO - Wrapping dataset from memory object
+2015-06-25 12:53:52,766 - opendeep.models.model - INFO - Creating a new instance of <class 'opendeep.models.single_layer.lstm.LSTM'>
+2015-06-25 12:53:52,766 - opendeep.utils.file_ops - DEBUG - Attempting to make directory /home/markus/Github/ner/outputs/lstm
+2015-06-25 12:53:52,766 - opendeep.utils.file_ops - DEBUG - Directory /home/markus/Github/ner/outputs/lstm already exists!
+2015-06-25 12:53:52,766 - opendeep.models.model - INFO - <class 'opendeep.models.single_layer.lstm.LSTM'> self.args: {'noise_level': 0.2, 'r_bias_init': 0.0, 'bias_init': 0.0, 'r_weights_mean': 0, 'weights_init': 'uniform', 'output_size': 4, 'weights_std': 0.005, 'cost_function': 'nll', 'clip_recurrent_grads': 5.0, 'inner_hidden_activation': 'sigmoid', 'input_size': 91, 'hidden_size': 64, 'direction': 'bidirectional', 'noise': False, 'activation': 'softmax', 'noise_decay': False, 'noise_decay_amount': 0.99, 'r_weights_std': 0.005, 'weights_mean': 0, 'weights_interval': 'montreal', 'outdir': 'outputs/lstm/', 'r_weights_init': 'orthogonal', 'hidden_activation': 'tanh', 'cost_args': {'one_hot': True}, 'mrg': <theano.sandbox.rng_mrg.MRG_RandomStreams object at 0x7f2d51d6c190>, 'r_weights_interval': 'montreal'}
+2015-06-25 12:53:52,766 - opendeep.models.model - DEBUG - Saving <class 'opendeep.models.single_layer.lstm.LSTM'> configuration to /home/markus/Github/ner/outputs/lstm/lstm_config.pkl
+2015-06-25 12:53:52,767 - opendeep.utils.nnet - DEBUG - Creating weights with shape (91, 64) from Uniform distribution with formula name: montreal
+2015-06-25 12:53:52,767 - opendeep.utils.nnet - DEBUG - Creating weights with shape (91, 64) from Uniform distribution with formula name: montreal
+2015-06-25 12:53:52,767 - opendeep.utils.nnet - DEBUG - Creating weights with shape (91, 64) from Uniform distribution with formula name: montreal
+2015-06-25 12:53:52,768 - opendeep.utils.nnet - DEBUG - Creating weights with shape (91, 64) from Uniform distribution with formula name: montreal
+2015-06-25 12:53:52,787 - opendeep.utils.nnet - DEBUG - Creating weights with shape (64, 4) from Uniform distribution with formula name: montreal
+2015-06-25 12:53:52,787 - opendeep.utils.nnet - DEBUG - Initializing bias variable with shape (64,)
+2015-06-25 12:53:52,787 - opendeep.utils.nnet - DEBUG - Initializing bias variable with shape (64,)
+2015-06-25 12:53:52,787 - opendeep.utils.nnet - DEBUG - Initializing bias variable with shape (64,)
+2015-06-25 12:53:52,788 - opendeep.utils.nnet - DEBUG - Initializing bias variable with shape (64,)
+2015-06-25 12:53:52,788 - opendeep.utils.nnet - DEBUG - Initializing bias variable with shape (4,)
+/usr/local/lib/python2.7/dist-packages/theano/scan_module/scan.py:1018: Warning: In the strict mode, all neccessary shared variables must be passed as a part of non_sequences
+  'must be passed as a part of non_sequences', Warning)
+2015-06-25 12:53:52,870 - opendeep.models.single_layer.lstm - INFO - Initialized an LSTM!
+2015-06-25 12:53:52,872 - opendeep.optimization.optimizer - INFO - Initializing optimizer <class 'opendeep.optimization.rmsprop.RMSProp'>
+2015-06-25 12:53:52,872 - opendeep.optimization.optimizer - INFO - Optimizer config args: {'grad_clip': None, 'max_scaling': 100000.0, 'lr_decay': 'exponential', 'early_stop_length': 100, 'save_frequency': 10, 'decay': 0.95, 'hard_clip': False, 'learning_rate': 0.002, 'batch_size': 300, 'dataset': <opendeep.data.dataset_memory.MemoryDataset object at 0x7f2d4a5c4710>, 'lr_factor': 0.95, 'minimum_batch_size': 1, 'model': <opendeep.models.single_layer.lstm.LSTM object at 0x7f2d4a5c4d90>, 'n_epoch': 500, 'early_stop_threshold': 1.0}
+Using saved session configuration for http://localhost:5006/
+To override, pass 'load_from_config=False' to Session
+2015-06-25 12:53:52,876 - urllib3.connectionpool - INFO - Starting new HTTP connection (1): localhost
+2015-06-25 12:53:52,890 - bokeh.session - INFO - got read write apikey
+2015-06-25 12:53:52,960 - opendeep.monitor.plot - DEBUG - Figure indices for monitors: {'train_cost': 0, 'error/train': 1, 'error/test': 1, 'error/valid': 1, 'error': 1}
+
+(process:17259): GLib-CRITICAL **: g_slice_set_config: assertion 'sys_page_size == 0' failed
+2015-06-25 12:53:53,430 - opendeep.optimization.rmsprop - DEBUG - Setting up RMSProp for optimizer...
+2015-06-25 12:53:53,460 - opendeep.optimization.optimizer - INFO - <class 'opendeep.models.single_layer.lstm.LSTM'> params: [W_x_c, W_x_i, W_x_f, W_x_o, U_h_c, U_h_i, U_h_f, U_h_o, U_h_c_b, U_h_i_b, U_h_f_b, U_h_o_b, W_h_y, b_c, b_i, b_f, b_o, b_y]
+2015-06-25 12:53:53,460 - opendeep.optimization.optimizer - INFO - Compiling f_learn 1/1 function for model <class 'opendeep.models.single_layer.lstm.LSTM'>...
+/usr/local/lib/python2.7/dist-packages/theano/scan_module/scan_perform_ext.py:133: RuntimeWarning: numpy.ndarray size changed, may indicate binary incompatibility
+  from scan_perform.scan_perform import *
+2015-06-25 12:54:11,710 - opendeep.optimization.optimizer - INFO - f_learn compilation took 18.24985 seconds
+2015-06-25 12:54:11,710 - opendeep.optimization.optimizer - DEBUG - Compiling monitor functions...
+2015-06-25 12:54:16,660 - opendeep.optimization.optimizer - DEBUG - Compilation done. Took 4.949837 seconds
+2015-06-25 12:54:16,660 - opendeep.optimization.optimizer - INFO - -----------TRAINING <class 'opendeep.models.single_layer.lstm.LSTM'> function 1/1 FOR 500 EPOCHS-----------
+2015-06-25 12:54:16,661 - opendeep.optimization.optimizer - INFO - EPOCH 1
+2015-06-25 12:55:20,631 - opendeep.optimization.optimizer - INFO - Train cost: 0.037702
+2015-06-25 12:55:20,631 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.037286866974833063}
+2015-06-25 12:55:22,117 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.03109781874039939}
+2015-06-25 12:55:22,907 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.02992085769980507}
+2015-06-25 12:55:22,941 - opendeep.optimization.optimizer - INFO - time: 1.104675 minutes
+2015-06-25 12:55:22,941 - opendeep.optimization.optimizer - DEBUG - remaining time: 9.187218 hours
+2015-06-25 12:55:22,942 - opendeep.optimization.optimizer - INFO - EPOCH 2
+2015-06-25 12:56:25,445 - opendeep.optimization.optimizer - INFO - Train cost: 0.020794
+2015-06-25 12:56:25,445 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.027921355932203386}
+2015-06-25 12:56:26,946 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.02607403993855607}
+2015-06-25 12:56:27,747 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.024960038986354776}
+2015-06-25 12:56:27,823 - opendeep.optimization.optimizer - INFO - time: 1.081360 minutes
+2015-06-25 12:56:27,823 - opendeep.optimization.optimizer - DEBUG - remaining time: 9.072049 hours
+2015-06-25 12:56:27,824 - opendeep.optimization.optimizer - INFO - EPOCH 3
+2015-06-25 12:57:28,671 - opendeep.optimization.optimizer - INFO - Train cost: 0.016941
+2015-06-25 12:57:28,671 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.024050600924499239}
+2015-06-25 12:57:30,186 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.022827526881720434}
+2015-06-25 12:57:30,994 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.022060136452241717}
+2015-06-25 12:57:31,080 - opendeep.optimization.optimizer - INFO - time: 1.054265 minutes
+2015-06-25 12:57:31,080 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.946833 hours
+2015-06-25 12:57:31,080 - opendeep.optimization.optimizer - INFO - EPOCH 4
+2015-06-25 12:58:31,707 - opendeep.optimization.optimizer - INFO - Train cost: 0.015063
+2015-06-25 12:58:31,707 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.021672449922958401}
+2015-06-25 12:58:33,195 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.021165376344086023}
+2015-06-25 12:58:33,999 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.02069512670565302}
+2015-06-25 12:58:34,073 - opendeep.optimization.optimizer - INFO - time: 1.049887 minutes
+2015-06-25 12:58:34,074 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.866391 hours
+2015-06-25 12:58:34,074 - opendeep.optimization.optimizer - INFO - EPOCH 5
+2015-06-25 12:59:36,700 - opendeep.optimization.optimizer - INFO - Train cost: 0.013808
+2015-06-25 12:59:36,700 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.01993465331278892}
+2015-06-25 12:59:38,231 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.019449953917050684}
+2015-06-25 12:59:39,112 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.019385575048732943}
+2015-06-25 12:59:39,185 - opendeep.optimization.optimizer - INFO - time: 1.085184 minutes
+2015-06-25 12:59:39,185 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.869366 hours
+2015-06-25 12:59:39,185 - opendeep.optimization.optimizer - INFO - EPOCH 6
+2015-06-25 13:00:41,721 - opendeep.optimization.optimizer - INFO - Train cost: 0.012846
+2015-06-25 13:00:41,721 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.018473369286081152}
+2015-06-25 13:00:43,478 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.018555698924731186}
+2015-06-25 13:00:44,381 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.018575048732943477}
+2015-06-25 13:00:44,454 - opendeep.optimization.optimizer - INFO - time: 1.087806 minutes
+2015-06-25 13:00:44,454 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.868919 hours
+2015-06-25 13:00:44,454 - opendeep.optimization.optimizer - INFO - EPOCH 7
+2015-06-25 13:01:45,558 - opendeep.optimization.optimizer - INFO - Train cost: 0.012053
+2015-06-25 13:01:45,559 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.017234560862865934}
+2015-06-25 13:01:47,049 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.017958525345622117}
+2015-06-25 13:01:47,849 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.01806988304093567}
+2015-06-25 13:01:47,926 - opendeep.optimization.optimizer - INFO - time: 1.057853 minutes
+2015-06-25 13:01:47,926 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.828261 hours
+2015-06-25 13:01:47,926 - opendeep.optimization.optimizer - INFO - EPOCH 8
+2015-06-25 13:02:48,603 - opendeep.optimization.optimizer - INFO - Train cost: 0.011394
+2015-06-25 13:02:48,603 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.016235495634309195}
+2015-06-25 13:02:50,088 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.017413425499231954}
+2015-06-25 13:02:50,886 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.017594054580896686}
+2015-06-25 13:02:50,959 - opendeep.optimization.optimizer - INFO - time: 1.050554 minutes
+2015-06-25 13:02:50,960 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.785878 hours
+2015-06-25 13:02:50,960 - opendeep.optimization.optimizer - INFO - EPOCH 9
+2015-06-25 13:03:52,333 - opendeep.optimization.optimizer - INFO - Train cost: 0.010839
+2015-06-25 13:03:52,333 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.015405911658962509}
+2015-06-25 13:03:53,993 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.016668294930875575}
+2015-06-25 13:03:54,859 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.016867446393762184}
+2015-06-25 13:03:54,934 - opendeep.optimization.optimizer - INFO - time: 1.066230 minutes
+2015-06-25 13:03:54,934 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.763276 hours
+2015-06-25 13:03:54,934 - opendeep.optimization.optimizer - INFO - EPOCH 10
+2015-06-25 13:04:56,053 - opendeep.optimization.optimizer - INFO - Train cost: 0.010353
+2015-06-25 13:04:56,053 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.014658515665125851}
+2015-06-25 13:04:57,536 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.015946973886328725}
+2015-06-25 13:04:58,339 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.016261695906432744}
+2015-06-25 13:04:58,419 - opendeep.optimization.optimizer - INFO - time: 1.058075 minutes
+2015-06-25 13:04:58,419 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.734980 hours
+2015-06-25 13:04:58,419 - opendeep.models.model - DEBUG - Saving <class 'opendeep.models.single_layer.lstm.LSTM'> parameters to /home/markus/Github/ner/outputs/lstm/trained_epoch_10.pkl
+2015-06-25 13:04:58,420 - opendeep.optimization.optimizer - INFO - EPOCH 11
+2015-06-25 13:05:59,063 - opendeep.optimization.optimizer - INFO - Train cost: 0.009927
+2015-06-25 13:05:59,064 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.01401136620441705}
+2015-06-25 13:06:00,567 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.015324546850998462}
+2015-06-25 13:06:01,369 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.015713937621832361}
+2015-06-25 13:06:01,447 - opendeep.optimization.optimizer - INFO - time: 1.050444 minutes
+2015-06-25 13:06:01,447 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.702969 hours
+2015-06-25 13:06:01,447 - opendeep.optimization.optimizer - INFO - EPOCH 12
+2015-06-25 13:07:02,855 - opendeep.optimization.optimizer - INFO - Train cost: 0.009549
+2015-06-25 13:07:02,855 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.013416209553158705}
+2015-06-25 13:07:04,382 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.01497898617511521}
+2015-06-25 13:07:05,282 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.015338011695906435}
+2015-06-25 13:07:05,357 - opendeep.optimization.optimizer - INFO - time: 1.065166 minutes
+2015-06-25 13:07:05,357 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.683354 hours
+2015-06-25 13:07:05,358 - opendeep.optimization.optimizer - INFO - EPOCH 13
+2015-06-25 13:08:06,869 - opendeep.optimization.optimizer - INFO - Train cost: 0.009211
+2015-06-25 13:08:06,869 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.01290739085772984}
+2015-06-25 13:08:08,367 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.014651305683563742}
+2015-06-25 13:08:09,187 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.014833528265107211}
+2015-06-25 13:08:09,261 - opendeep.optimization.optimizer - INFO - time: 1.065051 minutes
+2015-06-25 13:08:09,261 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.663953 hours
+2015-06-25 13:08:09,261 - opendeep.optimization.optimizer - INFO - EPOCH 14
+2015-06-25 13:09:11,429 - opendeep.optimization.optimizer - INFO - Train cost: 0.008907
+2015-06-25 13:09:11,429 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.012431063174114019}
+2015-06-25 13:09:12,932 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.014304516129032255}
+2015-06-25 13:09:13,744 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.01429970760233918}
+2015-06-25 13:09:13,830 - opendeep.optimization.optimizer - INFO - time: 1.076153 minutes
+2015-06-25 13:09:13,831 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.651211 hours
+2015-06-25 13:09:13,831 - opendeep.optimization.optimizer - INFO - EPOCH 15
+2015-06-25 13:10:15,530 - opendeep.optimization.optimizer - INFO - Train cost: 0.008633
+2015-06-25 13:10:15,531 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.012013035439137131}
+2015-06-25 13:10:17,063 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.013964301075268816}
+2015-06-25 13:10:17,872 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.014012085769980503}
+2015-06-25 13:10:17,952 - opendeep.optimization.optimizer - INFO - time: 1.068681 minutes
+2015-06-25 13:10:17,952 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.633750 hours
+2015-06-25 13:10:17,952 - opendeep.optimization.optimizer - INFO - EPOCH 16
+2015-06-25 13:11:19,738 - opendeep.optimization.optimizer - INFO - Train cost: 0.008381
+2015-06-25 13:11:19,738 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.011617663071391893}
+2015-06-25 13:11:21,272 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.013679109062980031}
+2015-06-25 13:11:22,116 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.013629727095516572}
+2015-06-25 13:11:22,195 - opendeep.optimization.optimizer - INFO - time: 1.070716 minutes
+2015-06-25 13:11:22,196 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.617271 hours
+2015-06-25 13:11:22,196 - opendeep.optimization.optimizer - INFO - EPOCH 17
+2015-06-25 13:12:23,433 - opendeep.optimization.optimizer - INFO - Train cost: 0.008152
+2015-06-25 13:12:23,433 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.01128675911658962}
+2015-06-25 13:12:24,948 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.013429585253456219}
+2015-06-25 13:12:25,759 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.013344931773879142}
+2015-06-25 13:12:25,831 - opendeep.optimization.optimizer - INFO - time: 1.060585 minutes
+2015-06-25 13:12:25,831 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.595835 hours
+2015-06-25 13:12:25,831 - opendeep.optimization.optimizer - INFO - EPOCH 18
+2015-06-25 13:13:26,717 - opendeep.optimization.optimizer - INFO - Train cost: 0.007939
+2015-06-25 13:13:26,717 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.010952239342578317}
+2015-06-25 13:13:28,218 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.013247834101382486}
+2015-06-25 13:13:29,137 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.013148343079922027}
+2015-06-25 13:13:29,217 - opendeep.optimization.optimizer - INFO - time: 1.056433 minutes
+2015-06-25 13:13:29,218 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.572963 hours
+2015-06-25 13:13:29,218 - opendeep.optimization.optimizer - INFO - EPOCH 19
+2015-06-25 13:14:30,819 - opendeep.optimization.optimizer - INFO - Train cost: 0.007745
+2015-06-25 13:14:30,819 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.010634627632254744}
+2015-06-25 13:14:32,423 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.013062918586789556}
+2015-06-25 13:14:33,238 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.012962280701754385}
+2015-06-25 13:14:33,311 - opendeep.optimization.optimizer - INFO - time: 1.068221 minutes
+2015-06-25 13:14:33,312 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.555618 hours
+2015-06-25 13:14:33,312 - opendeep.optimization.optimizer - INFO - EPOCH 20
+2015-06-25 13:15:34,729 - opendeep.optimization.optimizer - INFO - Train cost: 0.007564
+2015-06-25 13:15:34,729 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.010361381612737528}
+2015-06-25 13:15:36,218 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.012885775729646699}
+2015-06-25 13:15:37,022 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.012745321637426902}
+2015-06-25 13:15:37,104 - opendeep.optimization.optimizer - INFO - time: 1.063202 minutes
+2015-06-25 13:15:37,104 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.536220 hours
+2015-06-25 13:15:37,105 - opendeep.models.model - DEBUG - Saving <class 'opendeep.models.single_layer.lstm.LSTM'> parameters to /home/markus/Github/ner/outputs/lstm/trained_epoch_20.pkl
+2015-06-25 13:15:37,105 - opendeep.optimization.optimizer - INFO - EPOCH 21
+2015-06-25 13:16:38,409 - opendeep.optimization.optimizer - INFO - Train cost: 0.007397
+2015-06-25 13:16:38,409 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.010081987673343607}
+2015-06-25 13:16:39,915 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.012746144393241168}
+2015-06-25 13:16:40,717 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.012630506822612084}
+2015-06-25 13:16:40,797 - opendeep.optimization.optimizer - INFO - time: 1.061524 minutes
+2015-06-25 13:16:40,797 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.516345 hours
+2015-06-25 13:16:40,797 - opendeep.optimization.optimizer - INFO - EPOCH 22
+2015-06-25 13:17:42,128 - opendeep.optimization.optimizer - INFO - Train cost: 0.007242
+2015-06-25 13:17:42,129 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0098322650231124804}
+2015-06-25 13:17:43,655 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.012626881720430106}
+2015-06-25 13:17:44,462 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.012524366471734891}
+2015-06-25 13:17:44,535 - opendeep.optimization.optimizer - INFO - time: 1.062304 minutes
+2015-06-25 13:17:44,536 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.496950 hours
+2015-06-25 13:17:44,536 - opendeep.optimization.optimizer - INFO - EPOCH 23
+2015-06-25 13:18:45,450 - opendeep.optimization.optimizer - INFO - Train cost: 0.007098
+2015-06-25 13:18:45,450 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0096023882896764251}
+2015-06-25 13:18:46,937 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.012474654377880189}
+2015-06-25 13:18:47,738 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.012418810916179338}
+2015-06-25 13:18:47,816 - opendeep.optimization.optimizer - INFO - time: 1.054666 minutes
+2015-06-25 13:18:47,816 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.475061 hours
+2015-06-25 13:18:47,816 - opendeep.optimization.optimizer - INFO - EPOCH 24
+2015-06-25 13:19:48,698 - opendeep.optimization.optimizer - INFO - Train cost: 0.006965
+2015-06-25 13:19:48,698 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0093994042116076048}
+2015-06-25 13:19:50,190 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.012367403993855604}
+2015-06-25 13:19:50,991 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.012257699805068224}
+2015-06-25 13:19:51,063 - opendeep.optimization.optimizer - INFO - time: 1.054118 minutes
+2015-06-25 13:19:51,064 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.453351 hours
+2015-06-25 13:19:51,064 - opendeep.optimization.optimizer - INFO - EPOCH 25
+2015-06-25 13:20:52,143 - opendeep.optimization.optimizer - INFO - Train cost: 0.006841
+2015-06-25 13:20:52,143 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0092165074473549002}
+2015-06-25 13:20:53,644 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.012291582181259598}
+2015-06-25 13:20:54,452 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.012187914230019492}
+2015-06-25 13:20:54,530 - opendeep.optimization.optimizer - INFO - time: 1.057777 minutes
+2015-06-25 13:20:54,531 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.433131 hours
+2015-06-25 13:20:54,531 - opendeep.optimization.optimizer - INFO - EPOCH 26
+2015-06-25 13:21:56,074 - opendeep.optimization.optimizer - INFO - Train cost: 0.006725
+2015-06-25 13:21:56,074 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0090462249614792056}
+2015-06-25 13:21:57,559 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.012202949308755758}
+2015-06-25 13:21:58,364 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.012074366471734896}
+2015-06-25 13:21:58,444 - opendeep.optimization.optimizer - INFO - time: 1.065219 minutes
+2015-06-25 13:21:58,444 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.415372 hours
+2015-06-25 13:21:58,445 - opendeep.optimization.optimizer - INFO - EPOCH 27
+2015-06-25 13:23:00,410 - opendeep.optimization.optimizer - INFO - Train cost: 0.006617
+2015-06-25 13:23:00,411 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0088840780688238304}
+2015-06-25 13:23:01,923 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.012178556067588324}
+2015-06-25 13:23:02,733 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.012020662768031189}
+2015-06-25 13:23:02,810 - opendeep.optimization.optimizer - INFO - time: 1.072755 minutes
+2015-06-25 13:23:02,810 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.399813 hours
+2015-06-25 13:23:02,810 - opendeep.optimization.optimizer - INFO - EPOCH 28
+2015-06-25 13:24:05,450 - opendeep.optimization.optimizer - INFO - Train cost: 0.006516
+2015-06-25 13:24:05,450 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0087271237801746261}
+2015-06-25 13:24:06,947 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.012056589861751153}
+2015-06-25 13:24:07,753 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011958576998050682}
+2015-06-25 13:24:07,830 - opendeep.optimization.optimizer - INFO - time: 1.083659 minutes
+2015-06-25 13:24:07,830 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.387152 hours
+2015-06-25 13:24:07,831 - opendeep.optimization.optimizer - INFO - EPOCH 29
+2015-06-25 13:25:10,227 - opendeep.optimization.optimizer - INFO - Train cost: 0.006422
+2015-06-25 13:25:10,227 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0085862865947611659}
+2015-06-25 13:25:11,798 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.012030506912442398}
+2015-06-25 13:25:12,617 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011901169590643275}
+2015-06-25 13:25:12,692 - opendeep.optimization.optimizer - INFO - time: 1.081017 minutes
+2015-06-25 13:25:12,692 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.373404 hours
+2015-06-25 13:25:12,692 - opendeep.optimization.optimizer - INFO - EPOCH 30
+2015-06-25 13:26:14,393 - opendeep.optimization.optimizer - INFO - Train cost: 0.006333
+2015-06-25 13:26:14,393 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0084579917822290712}
+2015-06-25 13:26:16,134 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011948602150537632}
+2015-06-25 13:26:16,936 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011814132553606237}
+2015-06-25 13:26:17,014 - opendeep.optimization.optimizer - INFO - time: 1.072036 minutes
+2015-06-25 13:26:17,014 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.357025 hours
+2015-06-25 13:26:17,015 - opendeep.models.model - DEBUG - Saving <class 'opendeep.models.single_layer.lstm.LSTM'> parameters to /home/markus/Github/ner/outputs/lstm/trained_epoch_30.pkl
+2015-06-25 13:26:17,015 - opendeep.optimization.optimizer - INFO - EPOCH 31
+2015-06-25 13:27:18,989 - opendeep.optimization.optimizer - INFO - Train cost: 0.006249
+2015-06-25 13:27:18,989 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.008336045197740111}
+2015-06-25 13:27:20,514 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011930506912442398}
+2015-06-25 13:27:21,339 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011704483430799219}
+2015-06-25 13:27:21,412 - opendeep.optimization.optimizer - INFO - time: 1.073272 minutes
+2015-06-25 13:27:21,412 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.340863 hours
+2015-06-25 13:27:21,412 - opendeep.optimization.optimizer - INFO - EPOCH 32
+2015-06-25 13:28:22,740 - opendeep.optimization.optimizer - INFO - Train cost: 0.006171
+2015-06-25 13:28:22,740 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0082257164869029287}
+2015-06-25 13:28:24,237 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011870721966205838}
+2015-06-25 13:28:25,032 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011692105263157896}
+2015-06-25 13:28:25,111 - opendeep.optimization.optimizer - INFO - time: 1.061642 minutes
+2015-06-25 13:28:25,111 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.321757 hours
+2015-06-25 13:28:25,111 - opendeep.optimization.optimizer - INFO - EPOCH 33
+2015-06-25 13:29:26,541 - opendeep.optimization.optimizer - INFO - Train cost: 0.006096
+2015-06-25 13:29:26,541 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0081192501284026719}
+2015-06-25 13:29:28,066 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011839447004608294}
+2015-06-25 13:29:28,887 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011618615984405459}
+2015-06-25 13:29:28,964 - opendeep.optimization.optimizer - INFO - time: 1.064211 minutes
+2015-06-25 13:29:28,964 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.303344 hours
+2015-06-25 13:29:28,964 - opendeep.optimization.optimizer - INFO - EPOCH 34
+2015-06-25 13:30:30,172 - opendeep.optimization.optimizer - INFO - Train cost: 0.006026
+2015-06-25 13:30:30,173 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0080139137134052456}
+2015-06-25 13:30:31,660 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011800983102918584}
+2015-06-25 13:30:32,458 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011566764132553607}
+2015-06-25 13:30:32,533 - opendeep.optimization.optimizer - INFO - time: 1.059473 minutes
+2015-06-25 13:30:32,533 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.283887 hours
+2015-06-25 13:30:32,533 - opendeep.optimization.optimizer - INFO - EPOCH 35
+2015-06-25 13:31:33,623 - opendeep.optimization.optimizer - INFO - Train cost: 0.005960
+2015-06-25 13:31:33,623 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0079029070364663619}
+2015-06-25 13:31:35,118 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011770291858678956}
+2015-06-25 13:31:35,925 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011548830409356725}
+2015-06-25 13:31:36,006 - opendeep.optimization.optimizer - INFO - time: 1.057879 minutes
+2015-06-25 13:31:36,006 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.264181 hours
+2015-06-25 13:31:36,006 - opendeep.optimization.optimizer - INFO - EPOCH 36
+2015-06-25 13:32:38,783 - opendeep.optimization.optimizer - INFO - Train cost: 0.005898
+2015-06-25 13:32:38,784 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0078112891628145907}
+2015-06-25 13:32:40,274 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011742089093701998}
+2015-06-25 13:32:41,076 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011485867446393759}
+2015-06-25 13:32:41,156 - opendeep.optimization.optimizer - INFO - time: 1.085821 minutes
+2015-06-25 13:32:41,156 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.250592 hours
+2015-06-25 13:32:41,156 - opendeep.optimization.optimizer - INFO - EPOCH 37
+2015-06-25 13:33:42,006 - opendeep.optimization.optimizer - INFO - Train cost: 0.005839
+2015-06-25 13:33:42,006 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0077219774011299414}
+2015-06-25 13:33:43,521 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.01170626728110599}
+2015-06-25 13:33:44,334 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011409064327485381}
+2015-06-25 13:33:44,407 - opendeep.optimization.optimizer - INFO - time: 1.054180 minutes
+2015-06-25 13:33:44,407 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.230161 hours
+2015-06-25 13:33:44,407 - opendeep.optimization.optimizer - INFO - EPOCH 38
+2015-06-25 13:34:45,839 - opendeep.optimization.optimizer - INFO - Train cost: 0.005784
+2015-06-25 13:34:45,839 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0076413662044170589}
+2015-06-25 13:34:47,324 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011686635944700459}
+2015-06-25 13:34:48,126 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011360916179337231}
+2015-06-25 13:34:48,201 - opendeep.optimization.optimizer - INFO - time: 1.063217 minutes
+2015-06-25 13:34:48,201 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.211711 hours
+2015-06-25 13:34:48,201 - opendeep.optimization.optimizer - INFO - EPOCH 39
+2015-06-25 13:35:50,274 - opendeep.optimization.optimizer - INFO - Train cost: 0.005731
+2015-06-25 13:35:50,274 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0075708577298407836}
+2015-06-25 13:35:51,755 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011646267281105986}
+2015-06-25 13:35:52,561 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011336842105263156}
+2015-06-25 13:35:52,645 - opendeep.optimization.optimizer - INFO - time: 1.074070 minutes
+2015-06-25 13:35:52,646 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.195437 hours
+2015-06-25 13:35:52,646 - opendeep.optimization.optimizer - INFO - EPOCH 40
+2015-06-25 13:36:53,044 - opendeep.optimization.optimizer - INFO - Train cost: 0.005681
+2015-06-25 13:36:53,044 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0074960092449923004}
+2015-06-25 13:36:54,537 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011639969278033794}
+2015-06-25 13:36:55,336 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011314619883040935}
+2015-06-25 13:36:55,413 - opendeep.optimization.optimizer - INFO - time: 1.046127 minutes
+2015-06-25 13:36:55,414 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.173726 hours
+2015-06-25 13:36:55,414 - opendeep.models.model - DEBUG - Saving <class 'opendeep.models.single_layer.lstm.LSTM'> parameters to /home/markus/Github/ner/outputs/lstm/trained_epoch_40.pkl
+2015-06-25 13:36:55,415 - opendeep.optimization.optimizer - INFO - EPOCH 41
+2015-06-25 13:37:55,714 - opendeep.optimization.optimizer - INFO - Train cost: 0.005634
+2015-06-25 13:37:55,714 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0074186286594761144}
+2015-06-25 13:37:57,197 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011615944700460831}
+2015-06-25 13:37:57,986 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011277582846003898}
+2015-06-25 13:37:58,062 - opendeep.optimization.optimizer - INFO - time: 1.044127 minutes
+2015-06-25 13:37:58,062 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.151850 hours
+2015-06-25 13:37:58,063 - opendeep.optimization.optimizer - INFO - EPOCH 42
+2015-06-25 13:38:58,346 - opendeep.optimization.optimizer - INFO - Train cost: 0.005589
+2015-06-25 13:38:58,346 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0073563687724704698}
+2015-06-25 13:38:59,828 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.01158774193548387}
+2015-06-25 13:39:00,627 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011236842105263154}
+2015-06-25 13:39:00,699 - opendeep.optimization.optimizer - INFO - time: 1.043944 minutes
+2015-06-25 13:39:00,700 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.130154 hours
+2015-06-25 13:39:00,700 - opendeep.optimization.optimizer - INFO - EPOCH 43
+2015-06-25 13:40:01,196 - opendeep.optimization.optimizer - INFO - Train cost: 0.005547
+2015-06-25 13:40:01,196 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0072946738572162318}
+2015-06-25 13:40:02,685 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011581966205837173}
+2015-06-25 13:40:03,519 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011223586744639379}
+2015-06-25 13:40:03,610 - opendeep.optimization.optimizer - INFO - time: 1.048501 minutes
+2015-06-25 13:40:03,610 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.109465 hours
+2015-06-25 13:40:03,610 - opendeep.optimization.optimizer - INFO - EPOCH 44
+2015-06-25 13:41:06,305 - opendeep.optimization.optimizer - INFO - Train cost: 0.005508
+2015-06-25 13:41:06,305 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0072271032357473005}
+2015-06-25 13:41:07,839 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011549585253456221}
+2015-06-25 13:41:08,650 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011173586744639379}
+2015-06-25 13:41:08,734 - opendeep.optimization.optimizer - INFO - time: 1.085388 minutes
+2015-06-25 13:41:08,734 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.095293 hours
+2015-06-25 13:41:08,734 - opendeep.optimization.optimizer - INFO - EPOCH 45
+2015-06-25 13:42:10,457 - opendeep.optimization.optimizer - INFO - Train cost: 0.005470
+2015-06-25 13:42:10,457 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0071687981510015347}
+2015-06-25 13:42:11,933 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011547465437788017}
+2015-06-25 13:42:12,736 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011158479532163743}
+2015-06-25 13:42:12,813 - opendeep.optimization.optimizer - INFO - time: 1.067974 minutes
+2015-06-25 13:42:12,813 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.078013 hours
+2015-06-25 13:42:12,813 - opendeep.optimization.optimizer - INFO - EPOCH 46
+2015-06-25 13:43:14,347 - opendeep.optimization.optimizer - INFO - Train cost: 0.005434
+2015-06-25 13:43:14,347 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.007108346173600409}
+2015-06-25 13:43:15,976 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011514869431643626}
+2015-06-25 13:43:16,836 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011114035087719297}
+2015-06-25 13:43:16,922 - opendeep.optimization.optimizer - INFO - time: 1.068484 minutes
+2015-06-25 13:43:16,923 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.060794 hours
+2015-06-25 13:43:16,923 - opendeep.optimization.optimizer - INFO - EPOCH 47
+2015-06-25 13:44:19,355 - opendeep.optimization.optimizer - INFO - Train cost: 0.005400
+2015-06-25 13:44:19,355 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0070615665125834592}
+2015-06-25 13:44:20,966 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011517511520737329}
+2015-06-25 13:44:21,768 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.01109337231968811}
+2015-06-25 13:44:21,847 - opendeep.optimization.optimizer - INFO - time: 1.082068 minutes
+2015-06-25 13:44:21,847 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.045732 hours
+2015-06-25 13:44:21,847 - opendeep.optimization.optimizer - INFO - EPOCH 48
+2015-06-25 13:45:28,079 - opendeep.optimization.optimizer - INFO - Train cost: 0.005368
+2015-06-25 13:45:28,079 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0070126399589111417}
+2015-06-25 13:45:29,595 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011500368663594471}
+2015-06-25 13:45:30,401 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011063742690058481}
+2015-06-25 13:45:30,484 - opendeep.optimization.optimizer - INFO - time: 1.143947 minutes
+2015-06-25 13:45:30,485 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.040258 hours
+2015-06-25 13:45:30,485 - opendeep.optimization.optimizer - INFO - EPOCH 49
+2015-06-25 13:46:32,350 - opendeep.optimization.optimizer - INFO - Train cost: 0.005338
+2015-06-25 13:46:32,350 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0069695428864920373}
+2015-06-25 13:46:33,859 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011512165898617513}
+2015-06-25 13:46:34,685 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011041228070175442}
+2015-06-25 13:46:34,763 - opendeep.optimization.optimizer - INFO - time: 1.071306 minutes
+2015-06-25 13:46:34,763 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.023086 hours
+2015-06-25 13:46:34,764 - opendeep.optimization.optimizer - INFO - EPOCH 50
+2015-06-25 13:47:36,020 - opendeep.optimization.optimizer - INFO - Train cost: 0.005309
+2015-06-25 13:47:36,020 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0069261530559835641}
+2015-06-25 13:47:37,503 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011495391705069127}
+2015-06-25 13:47:38,303 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011011306042884989}
+2015-06-25 13:47:38,389 - opendeep.optimization.optimizer - INFO - time: 1.060419 minutes
+2015-06-25 13:47:38,389 - opendeep.optimization.optimizer - DEBUG - remaining time: 8.004253 hours
+2015-06-25 13:47:38,390 - opendeep.models.model - DEBUG - Saving <class 'opendeep.models.single_layer.lstm.LSTM'> parameters to /home/markus/Github/ner/outputs/lstm/trained_epoch_50.pkl
+2015-06-25 13:47:38,390 - opendeep.optimization.optimizer - INFO - EPOCH 51
+2015-06-25 13:48:39,794 - opendeep.optimization.optimizer - INFO - Train cost: 0.005282
+2015-06-25 13:48:39,794 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0068831022085259356}
+2015-06-25 13:48:41,334 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011473271889400921}
+2015-06-25 13:48:42,140 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011011306042884989}
+2015-06-25 13:48:42,220 - opendeep.optimization.optimizer - INFO - time: 1.063832 minutes
+2015-06-25 13:48:42,220 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.985967 hours
+2015-06-25 13:48:42,221 - opendeep.optimization.optimizer - INFO - EPOCH 52
+2015-06-25 13:49:42,646 - opendeep.optimization.optimizer - INFO - Train cost: 0.005256
+2015-06-25 13:49:42,646 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0068463790446841311}
+2015-06-25 13:49:44,125 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011464700460829492}
+2015-06-25 13:49:44,919 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011005750487329434}
+2015-06-25 13:49:44,998 - opendeep.optimization.optimizer - INFO - time: 1.046289 minutes
+2015-06-25 13:49:44,998 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.965183 hours
+2015-06-25 13:49:44,999 - opendeep.optimization.optimizer - INFO - EPOCH 53
+2015-06-25 13:50:44,966 - opendeep.optimization.optimizer - INFO - Train cost: 0.005232
+2015-06-25 13:50:44,966 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0068091114535182313}
+2015-06-25 13:50:46,446 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011461474654377879}
+2015-06-25 13:50:47,240 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011011306042884993}
+2015-06-25 13:50:47,328 - opendeep.optimization.optimizer - INFO - time: 1.038818 minutes
+2015-06-25 13:50:47,328 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.943475 hours
+2015-06-25 13:50:47,328 - opendeep.optimization.optimizer - INFO - EPOCH 54
+2015-06-25 13:51:47,396 - opendeep.optimization.optimizer - INFO - Train cost: 0.005209
+2015-06-25 13:51:47,396 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0067682074987159722}
+2015-06-25 13:51:48,874 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011454592933947773}
+2015-06-25 13:51:49,670 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011011306042884991}
+2015-06-25 13:51:49,747 - opendeep.optimization.optimizer - INFO - time: 1.040309 minutes
+2015-06-25 13:51:49,747 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.922135 hours
+2015-06-25 13:51:49,747 - opendeep.optimization.optimizer - INFO - EPOCH 55
+2015-06-25 13:52:52,341 - opendeep.optimization.optimizer - INFO - Train cost: 0.005187
+2015-06-25 13:52:52,341 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0067360708782742643}
+2015-06-25 13:52:53,864 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011458986175115211}
+2015-06-25 13:52:54,678 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.0110224171539961}
+2015-06-25 13:52:54,754 - opendeep.optimization.optimizer - INFO - time: 1.083441 minutes
+2015-06-25 13:52:54,754 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.906757 hours
+2015-06-25 13:52:54,754 - opendeep.optimization.optimizer - INFO - EPOCH 56
+2015-06-25 13:53:56,838 - opendeep.optimization.optimizer - INFO - Train cost: 0.005166
+2015-06-25 13:53:56,839 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0067056291730867978}
+2015-06-25 13:53:58,323 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011459938556067591}
+2015-06-25 13:53:59,178 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011006042884990255}
+2015-06-25 13:53:59,275 - opendeep.optimization.optimizer - INFO - time: 1.075341 minutes
+2015-06-25 13:53:59,275 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.890213 hours
+2015-06-25 13:53:59,275 - opendeep.optimization.optimizer - INFO - EPOCH 57
+2015-06-25 13:55:01,472 - opendeep.optimization.optimizer - INFO - Train cost: 0.005146
+2015-06-25 13:55:01,473 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0066817873651771938}
+2015-06-25 13:55:02,967 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011457081413210444}
+2015-06-25 13:55:03,766 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.011003898635477582}
+2015-06-25 13:55:03,841 - opendeep.optimization.optimizer - INFO - time: 1.076106 minutes
+2015-06-25 13:55:03,842 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.873720 hours
+2015-06-25 13:55:03,842 - opendeep.optimization.optimizer - INFO - EPOCH 58
+2015-06-25 13:56:06,143 - opendeep.optimization.optimizer - INFO - Train cost: 0.005128
+2015-06-25 13:56:06,143 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0066559116589625057}
+2015-06-25 13:56:07,705 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011443748079877112}
+2015-06-25 13:56:08,495 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010990935672514619}
+2015-06-25 13:56:08,577 - opendeep.optimization.optimizer - INFO - time: 1.078916 minutes
+2015-06-25 13:56:08,577 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.857534 hours
+2015-06-25 13:56:08,577 - opendeep.optimization.optimizer - INFO - EPOCH 59
+2015-06-25 13:57:09,516 - opendeep.optimization.optimizer - INFO - Train cost: 0.005110
+2015-06-25 13:57:09,516 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0066291987673343569}
+2015-06-25 13:57:10,980 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011449677419354841}
+2015-06-25 13:57:11,766 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010989083820662765}
+2015-06-25 13:57:11,840 - opendeep.optimization.optimizer - INFO - time: 1.054380 minutes
+2015-06-25 13:57:11,840 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.838230 hours
+2015-06-25 13:57:11,841 - opendeep.optimization.optimizer - INFO - EPOCH 60
+2015-06-25 13:58:11,794 - opendeep.optimization.optimizer - INFO - Train cost: 0.005093
+2015-06-25 13:58:11,794 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0066062609142270145}
+2015-06-25 13:58:13,259 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.01145062980030722}
+2015-06-25 13:58:14,048 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010975828460038984}
+2015-06-25 13:58:14,132 - opendeep.optimization.optimizer - INFO - time: 1.038182 minutes
+2015-06-25 13:58:14,132 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.817004 hours
+2015-06-25 13:58:14,132 - opendeep.models.model - DEBUG - Saving <class 'opendeep.models.single_layer.lstm.LSTM'> parameters to /home/markus/Github/ner/outputs/lstm/trained_epoch_60.pkl
+2015-06-25 13:58:14,133 - opendeep.optimization.optimizer - INFO - EPOCH 61
+2015-06-25 13:59:15,536 - opendeep.optimization.optimizer - INFO - Train cost: 0.005077
+2015-06-25 13:59:15,537 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0065818541345659971}
+2015-06-25 13:59:17,020 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011454439324116744}
+2015-06-25 13:59:17,827 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010969688109161792}
+2015-06-25 13:59:17,905 - opendeep.optimization.optimizer - INFO - time: 1.062868 minutes
+2015-06-25 13:59:17,905 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.798868 hours
+2015-06-25 13:59:17,905 - opendeep.optimization.optimizer - INFO - EPOCH 62
+2015-06-25 14:00:17,855 - opendeep.optimization.optimizer - INFO - Train cost: 0.005062
+2015-06-25 14:00:17,856 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0065593682588597829}
+2015-06-25 14:00:19,357 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011452534562211982}
+2015-06-25 14:00:20,164 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010968128654970762}
+2015-06-25 14:00:20,238 - opendeep.optimization.optimizer - INFO - time: 1.038877 minutes
+2015-06-25 14:00:20,238 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.777921 hours
+2015-06-25 14:00:20,238 - opendeep.optimization.optimizer - INFO - EPOCH 63
+2015-06-25 14:01:20,360 - opendeep.optimization.optimizer - INFO - Train cost: 0.005047
+2015-06-25 14:01:20,360 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0065376733436055458}
+2015-06-25 14:01:21,847 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011445499231950844}
+2015-06-25 14:01:22,659 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010953021442495128}
+2015-06-25 14:01:22,733 - opendeep.optimization.optimizer - INFO - time: 1.041574 minutes
+2015-06-25 14:01:22,733 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.757401 hours
+2015-06-25 14:01:22,733 - opendeep.optimization.optimizer - INFO - EPOCH 64
+2015-06-25 14:02:22,611 - opendeep.optimization.optimizer - INFO - Train cost: 0.005033
+2015-06-25 14:02:22,611 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0065178993323061095}
+2015-06-25 14:02:24,088 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011433118279569894}
+2015-06-25 14:02:24,889 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010928947368421052}
+2015-06-25 14:02:24,964 - opendeep.optimization.optimizer - INFO - time: 1.037176 minutes
+2015-06-25 14:02:24,964 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.736480 hours
+2015-06-25 14:02:24,964 - opendeep.optimization.optimizer - INFO - EPOCH 65
+2015-06-25 14:03:24,971 - opendeep.optimization.optimizer - INFO - Train cost: 0.005021
+2015-06-25 14:03:24,971 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0064973343605546968}
+2015-06-25 14:03:26,461 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011434439324116745}
+2015-06-25 14:03:27,264 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010943762183235867}
+2015-06-25 14:03:27,350 - opendeep.optimization.optimizer - INFO - time: 1.039759 minutes
+2015-06-25 14:03:27,350 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.715959 hours
+2015-06-25 14:03:27,351 - opendeep.optimization.optimizer - INFO - EPOCH 66
+2015-06-25 14:04:27,204 - opendeep.optimization.optimizer - INFO - Train cost: 0.005008
+2015-06-25 14:04:27,204 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.006479435028248587}
+2015-06-25 14:04:28,693 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011421105990783411}
+2015-06-25 14:04:29,495 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.0109270955165692}
+2015-06-25 14:04:29,574 - opendeep.optimization.optimizer - INFO - time: 1.037057 minutes
+2015-06-25 14:04:29,574 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.695239 hours
+2015-06-25 14:04:29,575 - opendeep.optimization.optimizer - INFO - EPOCH 67
+2015-06-25 14:05:29,507 - opendeep.optimization.optimizer - INFO - Train cost: 0.004996
+2015-06-25 14:05:29,507 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0064654237288135578}
+2015-06-25 14:05:31,005 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011410998463901688}
+2015-06-25 14:05:31,829 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010914132553606239}
+2015-06-25 14:05:31,904 - opendeep.optimization.optimizer - INFO - time: 1.038824 minutes
+2015-06-25 14:05:31,904 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.674811 hours
+2015-06-25 14:05:31,904 - opendeep.optimization.optimizer - INFO - EPOCH 68
+2015-06-25 14:06:31,864 - opendeep.optimization.optimizer - INFO - Train cost: 0.004985
+2015-06-25 14:06:31,864 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0064533333333333335}
+2015-06-25 14:06:33,347 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011398033794162828}
+2015-06-25 14:06:34,151 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010882651072124754}
+2015-06-25 14:06:34,225 - opendeep.optimization.optimizer - INFO - time: 1.038674 minutes
+2015-06-25 14:06:34,225 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.654460 hours
+2015-06-25 14:06:34,225 - opendeep.optimization.optimizer - INFO - EPOCH 69
+2015-06-25 14:07:34,105 - opendeep.optimization.optimizer - INFO - Train cost: 0.004975
+2015-06-25 14:07:34,105 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0064375141242937854}
+2015-06-25 14:07:35,590 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011394224270353304}
+2015-06-25 14:07:36,398 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.01088664717348928}
+2015-06-25 14:07:36,478 - opendeep.optimization.optimizer - INFO - time: 1.037535 minutes
+2015-06-25 14:07:36,478 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.634078 hours
+2015-06-25 14:07:36,478 - opendeep.optimization.optimizer - INFO - EPOCH 70
+2015-06-25 14:08:36,332 - opendeep.optimization.optimizer - INFO - Train cost: 0.004964
+2015-06-25 14:08:36,332 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0064208577298407801}
+2015-06-25 14:08:37,823 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011386605222734256}
+2015-06-25 14:08:38,626 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010858869395711502}
+2015-06-25 14:08:38,704 - opendeep.optimization.optimizer - INFO - time: 1.037096 minutes
+2015-06-25 14:08:38,704 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.613739 hours
+2015-06-25 14:08:38,704 - opendeep.models.model - DEBUG - Saving <class 'opendeep.models.single_layer.lstm.LSTM'> parameters to /home/markus/Github/ner/outputs/lstm/trained_epoch_70.pkl
+2015-06-25 14:08:38,705 - opendeep.optimization.optimizer - INFO - EPOCH 71
+2015-06-25 14:09:38,606 - opendeep.optimization.optimizer - INFO - Train cost: 0.004955
+2015-06-25 14:09:38,606 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0064067334360554699}
+2015-06-25 14:09:40,092 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011366973886328726}
+2015-06-25 14:09:40,900 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010851461988304093}
+2015-06-25 14:09:40,975 - opendeep.optimization.optimizer - INFO - time: 1.037831 minutes
+2015-06-25 14:09:40,975 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.593560 hours
+2015-06-25 14:09:40,975 - opendeep.optimization.optimizer - INFO - EPOCH 72
+2015-06-25 14:10:40,945 - opendeep.optimization.optimizer - INFO - Train cost: 0.004946
+2015-06-25 14:10:40,945 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0063973549049820217}
+2015-06-25 14:10:42,435 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011353640552995396}
+2015-06-25 14:10:43,247 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010846198830409357}
+2015-06-25 14:10:43,330 - opendeep.optimization.optimizer - INFO - time: 1.039247 minutes
+2015-06-25 14:10:43,330 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.573602 hours
+2015-06-25 14:10:43,330 - opendeep.optimization.optimizer - INFO - EPOCH 73
+2015-06-25 14:11:43,210 - opendeep.optimization.optimizer - INFO - Train cost: 0.004937
+2015-06-25 14:11:43,210 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0063844735490498185}
+2015-06-25 14:11:44,697 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011343164362519198}
+2015-06-25 14:11:45,513 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010842495126705654}
+2015-06-25 14:11:45,586 - opendeep.optimization.optimizer - INFO - time: 1.037600 minutes
+2015-06-25 14:11:45,587 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.553555 hours
+2015-06-25 14:11:45,587 - opendeep.optimization.optimizer - INFO - EPOCH 74
+2015-06-25 14:12:45,526 - opendeep.optimization.optimizer - INFO - Train cost: 0.004929
+2015-06-25 14:12:45,526 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.006373852080123265}
+2015-06-25 14:12:47,012 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011336866359447003}
+2015-06-25 14:12:47,819 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010822124756335282}
+2015-06-25 14:12:47,899 - opendeep.optimization.optimizer - INFO - time: 1.038534 minutes
+2015-06-25 14:12:47,899 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.533672 hours
+2015-06-25 14:12:47,899 - opendeep.optimization.optimizer - INFO - EPOCH 75
+2015-06-25 14:13:47,836 - opendeep.optimization.optimizer - INFO - Train cost: 0.004921
+2015-06-25 14:13:47,836 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0063616486902927562}
+2015-06-25 14:13:49,323 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011330199692780337}
+2015-06-25 14:13:50,128 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010820272904483431}
+2015-06-25 14:13:50,205 - opendeep.optimization.optimizer - INFO - time: 1.038425 minutes
+2015-06-25 14:13:50,205 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.513848 hours
+2015-06-25 14:13:50,205 - opendeep.optimization.optimizer - INFO - EPOCH 76
+2015-06-25 14:14:50,160 - opendeep.optimization.optimizer - INFO - Train cost: 0.004914
+2015-06-25 14:14:50,160 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.006352609142270157}
+2015-06-25 14:14:51,648 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011326973886328723}
+2015-06-25 14:14:52,447 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010807017543859647}
+2015-06-25 14:14:52,535 - opendeep.optimization.optimizer - INFO - time: 1.038820 minutes
+2015-06-25 14:14:52,535 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.494126 hours
+2015-06-25 14:14:52,535 - opendeep.optimization.optimizer - INFO - EPOCH 77
+2015-06-25 14:15:52,482 - opendeep.optimization.optimizer - INFO - Train cost: 0.004907
+2015-06-25 14:15:52,482 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0063441345659989712}
+2015-06-25 14:15:53,996 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011329831029185864}
+2015-06-25 14:15:54,805 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010795906432748539}
+2015-06-25 14:15:54,880 - opendeep.optimization.optimizer - INFO - time: 1.039076 minutes
+2015-06-25 14:15:54,880 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.474491 hours
+2015-06-25 14:15:54,880 - opendeep.optimization.optimizer - INFO - EPOCH 78
+2015-06-25 14:16:54,835 - opendeep.optimization.optimizer - INFO - Train cost: 0.004900
+2015-06-25 14:16:54,835 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0063327221366204405}
+2015-06-25 14:16:56,332 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011323164362519199}
+2015-06-25 14:16:57,137 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010795906432748539}
+2015-06-25 14:16:57,222 - opendeep.optimization.optimizer - INFO - time: 1.039033 minutes
+2015-06-25 14:16:57,222 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.454911 hours
+2015-06-25 14:16:57,223 - opendeep.optimization.optimizer - INFO - EPOCH 79
+2015-06-25 14:17:57,188 - opendeep.optimization.optimizer - INFO - Train cost: 0.004894
+2015-06-25 14:17:57,189 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0063257164869029254}
+2015-06-25 14:17:58,675 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011326236559139783}
+2015-06-25 14:17:59,479 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010782651072124755}
+2015-06-25 14:17:59,560 - opendeep.optimization.optimizer - INFO - time: 1.038952 minutes
+2015-06-25 14:17:59,560 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.435382 hours
+2015-06-25 14:17:59,560 - opendeep.optimization.optimizer - INFO - EPOCH 80
+2015-06-25 14:18:59,492 - opendeep.optimization.optimizer - INFO - Train cost: 0.004888
+2015-06-25 14:18:59,492 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0063187570621468896}
+2015-06-25 14:19:00,979 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011321474654377882}
+2015-06-25 14:19:01,790 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010777095516569199}
+2015-06-25 14:19:01,868 - opendeep.optimization.optimizer - INFO - time: 1.038457 minutes
+2015-06-25 14:19:01,868 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.415864 hours
+2015-06-25 14:19:01,868 - opendeep.models.model - DEBUG - Saving <class 'opendeep.models.single_layer.lstm.LSTM'> parameters to /home/markus/Github/ner/outputs/lstm/trained_epoch_80.pkl
+2015-06-25 14:19:01,869 - opendeep.optimization.optimizer - INFO - EPOCH 81
+2015-06-25 14:20:01,831 - opendeep.optimization.optimizer - INFO - Train cost: 0.004882
+2015-06-25 14:20:01,831 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0063101694915254202}
+2015-06-25 14:20:03,313 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011314807987711216}
+2015-06-25 14:20:04,120 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010786354775828462}
+2015-06-25 14:20:04,197 - opendeep.optimization.optimizer - INFO - time: 1.038801 minutes
+2015-06-25 14:20:04,197 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.396430 hours
+2015-06-25 14:20:04,197 - opendeep.optimization.optimizer - INFO - EPOCH 82
+2015-06-25 14:21:04,768 - opendeep.optimization.optimizer - INFO - Train cost: 0.004876
+2015-06-25 14:21:04,768 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0063005649717514083}
+2015-06-25 14:21:06,258 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011296712749615976}
+2015-06-25 14:21:07,065 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010775243664717347}
+2015-06-25 14:21:07,140 - opendeep.optimization.optimizer - INFO - time: 1.049050 minutes
+2015-06-25 14:21:07,140 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.377919 hours
+2015-06-25 14:21:07,141 - opendeep.optimization.optimizer - INFO - EPOCH 83
+2015-06-25 14:22:09,418 - opendeep.optimization.optimizer - INFO - Train cost: 0.004871
+2015-06-25 14:22:09,418 - opendeep.optimization.optimizer - INFO - Train monitors: {'error/train': 0.0062928813559322005}
+2015-06-25 14:22:10,920 - opendeep.optimization.optimizer - INFO - Valid monitors: {'error/valid': 0.011286236559139785}
+2015-06-25 14:22:11,742 - opendeep.optimization.optimizer - INFO - Test monitors: {'error/test': 0.010775243664717347}
+2015-06-25 14:22:11,816 - opendeep.optimization.optimizer - INFO - time: 1.077927 minutes
+2015-06-25 14:22:11,817 - opendeep.optimization.optimizer - DEBUG - remaining time: 7.361851 hours
+2015-06-25 14:22:11,817 - opendeep.optimization.optimizer - INFO - EPOCH 84
+2015-06-25 14:22:14,315 - opendeep.optimization.optimizer - INFO - STOPPING EARLY FROM KEYBOARDINTERRUPT
+2015-06-25 14:22:14,315 - opendeep.optimization.optimizer - DEBUG - Restoring best model parameters...
+2015-06-25 14:22:14,316 - opendeep.optimization.optimizer - DEBUG - Saving model parameters...
+2015-06-25 14:22:14,317 - opendeep.models.model - DEBUG - Saving <class 'opendeep.models.single_layer.lstm.LSTM'> parameters to /home/markus/Github/ner/outputs/lstm/trained_epoch_84.pkl
+2015-06-25 14:22:14,317 - opendeep.optimization.optimizer - INFO - ------------TRAIN TIME TOOK 1.466015 hours---------
+2015-06-25 14:22:14,317 - opendeep.optimization.optimizer - INFO - ------------TOTAL <class 'opendeep.models.single_layer.lstm.LSTM'> TRAIN TIME TOOK 1.466015 hours---------
+
+Process finished with exit code 0
