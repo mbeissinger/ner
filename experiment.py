@@ -3,79 +3,25 @@ Character-level recurrent model for named entity recognition.
 """
 from __future__ import print_function, division
 # normal imports
-import os
 import math
+import itertools
 import numpy
 import theano.tensor as T
 import pickle
 # opendeep imports
 import opendeep
-from opendeep.data import MemoryDataset
+from opendeep.data import MemoryDataset, TEST
 from opendeep.models import LSTM
 from opendeep.monitor import Monitor, Plot
 from opendeep.optimization import RMSProp
 from opendeep.utils.misc import numpy_one_hot
+# internal imports
+from data_processing import parse_text_files
 
-
-def find_txt_files(data_dir='data/'):
-    for root, dirs, files in os.walk(data_dir):
-        for basename in files:
-            name, ext = os.path.splitext(basename)
-            if ext == ".txt":
-                filename = os.path.join(root, basename)
-                yield filename
-
-def is_label(val):
-    try:
-        int(val)
-        return False
-    except ValueError:
-        if str(val) == "O":
-            return False
-        else:
-            return True
-
-def getCharsDataset(sequence_length=100, train_split=0.85, valid_split=0.1):
+def getCharsDataset(sequence_length=100, train_split=0.85, valid_split=0.1, data_dir='data/'):
     # try to read the txt files and build the character array & vocabulary
     print("Processing files (this loads everything into memory)...")
-    data = []
-    labels = []
-    NOT_LABEL = "N/A"
-    entity_vocab = {NOT_LABEL: 0}
-    entity_idx = 1
-    vocab = {}
-    vocab_idx = 0
-    # go through each txt file
-    for filename in find_txt_files():
-        try:
-            with open(filename, mode='r') as f:
-                # get out the tokenized/labeled lines
-                lines = f.readlines()
-                # for each line, add its character embeddings to the data array.
-                # if the character doesn't exist yet, add it to the vocab dict.
-                for line in lines:
-                    chars, label = line.split('\t', 1)
-                    label = label.split('\n', 1)[0]
-                    # first, deal with the label if it is not 0.
-                    if is_label(label):
-                        if label not in entity_vocab:
-                            entity_vocab[label] = entity_idx
-                            entity_idx += 1
-                    else:
-                        label = NOT_LABEL
-                    # need to append a space after the last character
-                    chars += ' '
-                    for char in chars:
-                        # add unseen char to vocab
-                        if char not in vocab:
-                            vocab[char] = vocab_idx
-                            vocab_idx += 1
-                        # add the character and label!
-                        data.append(vocab[char])
-                        labels.append(entity_vocab[label])
-        except Exception:
-            print("Error reading file %s!" % filename)
-            raise
+    (data, vocab), (labels, entity_vocab) = parse_text_files(data_dir)
 
     # l = numpy.asarray(labels)
     # percent_entity = numpy.sum(l>0) / l.shape[0]
@@ -162,18 +108,70 @@ def getCharsDataset(sequence_length=100, train_split=0.85, valid_split=0.1):
                             valid_X=valid_X, valid_Y=valid_Y,
                             test_X=test_X, test_Y=test_Y)
 
-    return dataset, vocab_size, label_size
+    return dataset, vocab, entity_vocab
+
+def train(lstm, dataset):
+    # let's monitor the error %
+    # output is in shape (n_timesteps, n_sequences, data_dim)
+    # calculate the mean prediction error over timesteps and batches
+    predictions = T.argmax(lstm.get_outputs(), axis=2)
+    actual = T.argmax(lstm.get_targets()[0].dimshuffle(1, 0, 2), axis=2)
+    error = T.mean(T.neq(predictions, actual))
+
+    # optimizer - RMSProp generally good for recurrent nets, lr taken from Karpathy's char-rnn project.
+    optimizer = RMSProp(
+        dataset=dataset,
+        n_epoch=500,
+        batch_size=100,
+        save_frequency=10,
+        learning_rate=2e-3,
+        lr_decay="exponential",
+        lr_factor=0.95,
+        grad_clip=None,
+        hard_clip=False
+    )
+
+    # monitors
+    errors = Monitor(name='error', expression=error, train=True, valid=True, test=True)
+
+    # plot the monitor
+    plot = Plot('Chars', monitor_channels=[errors], open_browser=True)
+
+    lstm.train(optimizer=optimizer, plot=plot)
+
+def get_entities(data, predictions, vocab, entity_vocab):
+    # find continuous entity characters across timesteps
+    entities = []
+    previous_labels = [0 for _ in range(predictions.shape[1])]
+    continuous_strings = ["" for _ in range(len(previous_labels))]
+    for i, batch in enumerate(predictions):
+        for j, label in enumerate(batch):
+            # if not continuous, reset
+            if label != previous_labels[j]:
+                entity = continuous_strings[j]
+                # add only if the label is an entity
+                if previous_labels[j] != 0:
+                    label_string = entity_vocab.get(previous_labels[j])
+                    entities.append((entity, label_string))
+                continuous_strings[j] = ""
+            data_char = vocab.get(numpy.argmax(data[i, j]))
+            continuous_strings[j] += data_char
+            previous_labels[j] = label
+
+    return entities
+
+
 
 
 def main():
-    dataset, vocab_size, label_size = getCharsDataset(sequence_length=200)
+    dataset, vocab, entity_vocab = getCharsDataset(sequence_length=200)
 
     # define our model! we are using lstm.
     hidden_size = 128
 
-    lstm = LSTM(input_size=vocab_size,
+    lstm = LSTM(input_size=len(vocab),
                 hidden_size=hidden_size,
-                output_size=label_size,
+                output_size=len(entity_vocab),
                 hidden_activation='tanh',
                 inner_hidden_activation='sigmoid',
                 activation='softmax',
@@ -187,33 +185,20 @@ def main():
                 cost_function='nll',
                 cost_args={'one_hot': True})
 
-    # output is in shape (n_timesteps, n_sequences, data_dim)
+    # train the lstm on our dataset!
+    train(lstm, dataset)
 
-    # calculate the mean prediction error over timesteps and batches
-    predictions = T.argmax(lstm.get_outputs(), axis=2)
-    actual = T.argmax(lstm.get_targets()[0].dimshuffle(1, 0, 2), axis=2)
-    error = T.mean(T.neq(predictions, actual))
+    # test on some data (a few articles in size)!
+    test_dataset, _, _ = getCharsDataset(sequence_length=50000)
+    test_data, test_labels = dataset.get_subset(TEST, batch_size=1)
 
-    # optimizer
-    optimizer = RMSProp(dataset=dataset,
-                        model=lstm,
-                        n_epoch=500,
-                        batch_size=100,
-                        save_frequency=10,
-                        learning_rate=2e-3,
-                        lr_decay="exponential",
-                        lr_factor=0.95,
-                        grad_clip=None,
-                        hard_clip=False
-                        )
-
-    # monitors
-    errors = Monitor(name='error', expression=error, train=True, valid=True, test=True)
-
-    # plot the monitor
-    plot = Plot('Chars', monitor_channels=[errors], open_browser=True)
-
-    optimizer.train(plot=plot)
+    data, labels = itertools.izip(test_data, test_labels).next()
+    # data has to be vectorized characters (or you could use the vocab dictionary to create matrices from strings)
+    character_probs = lstm.run(data)
+    # this has the shape (timesteps, batches, data), so swap axes to (batches, timesteps, data)
+    character_probs = numpy.swapaxes(character_probs, 0, 1)
+    # now extract the guessed entities
+    predictions = numpy.argmax(character_probs, axis=2)
 
 
 if __name__ == "__main__":
