@@ -121,7 +121,7 @@ def train(lstm, dataset):
     # optimizer - RMSProp generally good for recurrent nets, lr taken from Karpathy's char-rnn project.
     optimizer = RMSProp(
         dataset=dataset,
-        n_epoch=500,
+        n_epoch=250,
         batch_size=100,
         save_frequency=10,
         learning_rate=2e-3,
@@ -140,23 +140,23 @@ def train(lstm, dataset):
     lstm.train(optimizer=optimizer, plot=plot)
 
 def get_entities(data, predictions, vocab, entity_vocab):
-    # find continuous entity characters across timesteps
+    # find contiguous entity characters across timesteps
     entities = []
-    previous_labels = [0 for _ in range(predictions.shape[1])]
-    continuous_strings = ["" for _ in range(len(previous_labels))]
     for i, batch in enumerate(predictions):
+        previous_label = 0
+        continuous_string = ""
         for j, label in enumerate(batch):
             # if not continuous, reset
-            if label != previous_labels[j]:
-                entity = continuous_strings[j]
+            if label != previous_label:
+                entity = continuous_string
                 # add only if the label is an entity
-                if previous_labels[j] != 0:
-                    label_string = entity_vocab.get(previous_labels[j])
+                if previous_label != 0:
+                    label_string = entity_vocab.get(previous_label)
                     entities.append((entity, label_string))
-                continuous_strings[j] = ""
+                continuous_string = ""
             data_char = vocab.get(numpy.argmax(data[i, j]))
-            continuous_strings[j] += data_char
-            previous_labels[j] = label
+            continuous_string += data_char
+            previous_label = label
 
     return entities
 
@@ -187,10 +187,11 @@ def main():
 
     # train the lstm on our dataset!
     train(lstm, dataset)
+    # or, load existing parameters
+    # lstm.load_params('outputs/lstm/trained_epoch_289.pkl')
 
     # test on some data (a few articles in size)!
-    test_dataset, _, _ = getCharsDataset(sequence_length=50000)
-    test_data, test_labels = dataset.get_subset(TEST, batch_size=1)
+    test_data, test_labels = dataset.get_subset(TEST, batch_size=500)
 
     data, labels = itertools.izip(test_data, test_labels).next()
     # data has to be vectorized characters (or you could use the vocab dictionary to create matrices from strings)
@@ -199,13 +200,22 @@ def main():
     character_probs = numpy.swapaxes(character_probs, 0, 1)
     # now extract the guessed entities
     predictions = numpy.argmax(character_probs, axis=2)
+    # actual = numpy.argmax(labels, axis=2)
+
+    test_char_level_error = numpy.sum(numpy.not_equal(predictions, numpy.argmax(labels, axis=2)))\
+                            / numpy.prod(predictions.shape)
+    print("Test error: %s" % str(test_char_level_error))
+
+    # get the entities!
+    # reverse the vocabs to translate from numbers to characters
+    inverse_vocab = {v: k for k, v in vocab.items()}
+    inverse_entity_vocab = {v: k for k, v in entity_vocab.items()}
+    entities = get_entities(data, predictions, inverse_vocab, inverse_entity_vocab)
+    print(entities)
 
 
 if __name__ == "__main__":
     # if you want debugging output from opendeep
     opendeep.config_root_logger()
     # run the experiment!
-    # main()
-    with open('outputs/lstm_2/lstm_config.pkl') as f:
-        a = pickle.load(f)
-    print(a)
+    main()
