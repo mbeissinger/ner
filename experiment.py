@@ -115,10 +115,8 @@ def main():
     with open('entity_vocab.pkl', 'wb') as f:
         pickle.dump(data.label_vocab, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('vocab.pkl', 'rb') as f:
-        vocab = pickle.load(f)
-    with open('entity_vocab.pkl', 'rb') as f:
-        label_vocab = pickle.load(f)
+    vocab = data.vocab
+    label_vocab = data.label_vocab
 
     lstm = LSTM(input_size=len(vocab),
                 hidden_size=128,
