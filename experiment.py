@@ -15,29 +15,50 @@ from opendeep.monitor import Monitor, Plot
 from opendeep.optimization import RMSProp
 from opendeep.utils.misc import numpy_one_hot
 
-def get_entities(data, predictions, vocab, entity_vocab):
+
+def get_entities(data, predictions, vocab_inv, entity_vocab):
     # find contiguous entity characters across timesteps
+    non_entity_label = entity_vocab.get('O')
     entities = []
-    for i, batch in enumerate(predictions):
-        previous_label = 0
-        continuous_string = ""
-        for j, label in enumerate(batch):
-            # if not continuous, reset
-            if label != previous_label:
-                entity = continuous_string
-                # add only if the label is an entity
-                if previous_label != 0:
-                    label_string = entity_vocab.get(previous_label)
-                    entities.append((entity, label_string))
-                continuous_string = ""
-            data_char = vocab.get(numpy.argmax(data[i, j]))
-            continuous_string += data_char
+    for i, query in enumerate(predictions):
+        previous_label = non_entity_label
+        entity_string = ""
+        for j, label in enumerate(query):
+            # find entity start point (expand to space character) and extract the continuous entity
+            if label != non_entity_label and label != previous_label:
+                entity_start = j
+                while vocab_inv.get(numpy.argmax(data[i, entity_start])) not in string.whitespace and entity_start >= 0:
+                    entity_start -= 1
+                # move start point forward one to get out of whitespace or back to 0 index
+                entity_start += 1
+                # now from the start point, extract continuous until whitespace or punctuation
+                entity_idx = entity_start
+                while entity_idx < len(query) and \
+                        (
+                            query[entity_idx] == label or
+                            entity_idx == entity_start or
+                            (
+                                entity_idx > entity_start and
+                                vocab_inv.get(numpy.argmax(data[i, entity_idx])) not in string.whitespace + string.punctuation and
+                                vocab_inv.get(numpy.argmax(data[i, entity_idx-1])) not in string.whitespace + string.punctuation
+                            )
+                        ):
+                    entity_string += vocab_inv.get(numpy.argmax(data[i, entity_idx]))
+                    entity_idx += 1
+                # get rid of trailing matched punctuation
+                if entity_string[-1] in string.punctuation:
+                    entity_string = entity_string[:-1]
+                # add the entity stripped of whitespace in beginning and end, and reset the string
+                entities.append(entity_string.strip())
+                entity_string = ""
+
             previous_label = label
 
     return entities
 
 def process_str(data_str, vocab):
     # process the raw input data string
+
     data = []
     for data_char in data_str:
         if data_char in vocab:
@@ -50,23 +71,18 @@ def process_str(data_str, vocab):
 
     return data
 
-def predict(query, lstm, vocab, inverse_vocab, inverse_entity_vocab):
+def predict(query, model, vocab, inverse_vocab, entity_vocab):
+
     data = process_str(query, vocab)
 
-    character_probs = lstm.run(data)
-    #this has the shape (timesteps, batches, data), so swap axes to (batches, timesteps, data)
+    character_probs = model.run(data)
+    # this has the shape (timesteps, batches, data), so swap axes to (batches, timesteps, data)
     character_probs = numpy.swapaxes(character_probs, 0, 1)
     # now extract the guessed entities
     predictions = numpy.argmax(character_probs, axis=2)
 
-    entities = get_entities(data, predictions, inverse_vocab, inverse_entity_vocab)
+    entities = get_entities(data, predictions, inverse_vocab, entity_vocab)
 
-    return entities
-
-def getEntities(self, query):
-    entities = self.predict(query)
-    uniques = set(entities)
-    entities = [{'type': a, 'text': t, 'count': entities.count((t, a))} for (t, a) in uniques]
     return entities
 
 
@@ -180,7 +196,6 @@ if __name__ == "__main__":
     lstm, vocab, entity_vocab = main()
 
     inverse_vocab = {v: k for k, v in vocab.items()}
-    inverse_entity_vocab = {v: k for k, v in entity_vocab.items()}
 
     # predict some stuff
-    print(predict("I love the iphone 6!", lstm, vocab, inverse_vocab, inverse_entity_vocab))
+    print(predict("I love the iphone 6!", lstm, vocab, inverse_vocab, entity_vocab))
