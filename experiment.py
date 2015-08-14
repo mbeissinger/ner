@@ -61,8 +61,7 @@ def process_str(data_str, vocab):
 
     data = []
     for data_char in data_str:
-        if data_char in vocab:
-            data.append(vocab[data_char])
+        data.append(vocab.get(data_char, 0))
 
     data = numpy_one_hot(numpy.asarray(data), n_classes=numpy.amax(vocab.values()) + 1)
 
