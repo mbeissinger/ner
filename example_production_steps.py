@@ -186,9 +186,10 @@ def run_model(model, data, vocab, label_vocab):
         for i, query in enumerate(predictions):
             previous_label = non_entity_label
             entity_string = ""
+            used_indices = set()
             for j, label in enumerate(query):
                 # find entity start point (expand to space character) and extract the continuous entity
-                if label != non_entity_label and label != previous_label:
+                if label != non_entity_label and label != previous_label and j not in used_indices:
                     entity_start = j
                     while vocab_inv.get(
                             numpy.argmax(data[i, entity_start])) not in string.whitespace and entity_start >= 0:
@@ -208,6 +209,7 @@ def run_model(model, data, vocab, label_vocab):
                                 )
                             ):
                         entity_string += vocab_inv.get(numpy.argmax(data[i, entity_idx]))
+                        used_indices.add(entity_idx)
                         entity_idx += 1
                     # get rid of trailing matched punctuation
                     if entity_string[-1] in string.punctuation:

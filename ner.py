@@ -52,9 +52,10 @@ class OpenNER:
         for i, query in enumerate(predictions):
             previous_label = non_entity_label
             entity_string = ""
+            used_indices = set()
             for j, label in enumerate(query):
                 # find entity start point (expand to space character) and extract the continuous entity
-                if label != non_entity_label and label != previous_label:
+                if label != non_entity_label and label != previous_label and j not in used_indices:
                     entity_start = j
                     while vocab_inv.get(numpy.argmax(data[i, entity_start])) not in string.whitespace and entity_start >= 0:
                         entity_start -= 1
@@ -73,6 +74,7 @@ class OpenNER:
                                 )
                             ):
                         entity_string += vocab_inv.get(numpy.argmax(data[i, entity_idx]))
+                        used_indices.add(entity_idx)
                         entity_idx += 1
                     # get rid of trailing matched punctuation
                     if entity_string[-1] in string.punctuation:
@@ -108,7 +110,7 @@ class OpenNER:
         character_probs = numpy.swapaxes(character_probs, 0, 1)
         # now extract the guessed entities
         predictions = numpy.argmax(character_probs, axis=2)
-
+        print(predictions)
         entities = self.__get_entities(data, predictions, self.inverse_vocab, self.entity_vocab)
 
         return entities
@@ -120,9 +122,25 @@ class OpenNER:
         return entities
 
 
+def __process_str(data_str, vocab):
+    # process the raw input data string
+    data = []
+    for data_char in data_str:
+        data.append(vocab.get(data_char, 0))
+
+    data = numpy_one_hot(numpy.asarray(data), n_classes=numpy.amax(vocab.values()) + 1)
+
+    seq, dim = data.shape
+    data = numpy.reshape(data, (1, seq, dim))
+
+    return data
+
 if __name__ == "__main__":
     ner = OpenNER()
     print(ner.predict("does the iphone 6 have good battery compared to the galaxy s6?"))
     print(ner.predict("iphone 8 is a pretty cool phone"))
     print(ner.predict("I'm loving this new iphone 1200!!"))
     print(ner.predict(" this iphone is the most fun phone ever made"))
+    print(ner.predict("i like the iphone 6 so much that i might not buy a new android"))
+    print(ner.predict("6 reasons to get the new iphone"))
+    print(ner.predict("i'm switching from android galaxy s6 to apple iphone 6 plus"))
