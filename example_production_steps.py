@@ -145,13 +145,20 @@ def train_model(model, dataset):
 #################################
 # Step 3: load model parameters #
 #################################
-def load_model_params(model, param_file='outputs/lstm/trained_epoch_10.pkl'):
+def load_model_params(model, param_file='outputs/lstm/trained_epoch_100.pkl'):
     # load params
     model.load_params(param_file)
 
 ################
-# Step 4: compile model's run function (run on dummy data)
+# Step 4: compile model's run function
 ################
+def compile_model_run_fn(model):
+    success, path = model.save_run('lstm_run_fn.pkl')
+    return path
+
+############
+# Step 5: run on real data
+############
 # parse a string into some input data
 def string_to_data(query, vocab):
     # process the raw input data string
@@ -169,14 +176,7 @@ def string_to_data(query, vocab):
 
     return data
 
-
-def run_model_dummy(model, data):
-    dummy_character_probabilities = model.run(data)
-
-############
-# Step 5: run on real data
-############
-def run_model(model, data, vocab, label_vocab):
+def run_model(model, data, vocab, label_vocab, compiled_fn_path=None):
     # in our case here, data will be given from the user as a string. we have to process with the encoding
     # and decoding vocabulary to do anything meaningful with the results
     def _get_entities(data, predictions, vocab_inv, entity_vocab):
@@ -223,7 +223,18 @@ def run_model(model, data, vocab, label_vocab):
 
     data = string_to_data(data, vocab)
 
-    character_probs = model.run(data)
+    ######
+    # running the model
+    ######
+    # use the model's run function
+    if compiled_fn_path is None:
+        character_probs = model.run(data)
+    # or alternatively, load the pickled run function from
+    else:
+        with open(compiled_fn_path, 'rb') as f:
+            run_fn = pickle.load(f)
+        character_probs = run_fn(data)
+
     # this has the shape (timesteps, batches, data), so swap axes to (batches, timesteps, data)
     character_probs = numpy.swapaxes(character_probs, 0, 1)
     # now extract the guessed entities

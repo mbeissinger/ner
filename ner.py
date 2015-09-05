@@ -6,9 +6,91 @@ from __future__ import print_function, division
 import string
 import numpy
 import pickle
+import theano.tensor as T
+import re
 # opendeep imports
 from opendeep.models import LSTM
+from opendeep.optimization import RMSProp
+from opendeep.monitor import Monitor, Plot
+from opendeep.data import TextDataset
 from opendeep.utils.misc import numpy_one_hot
+
+def get_dataset(path_to_data='data/tokenized/'):
+    # our input data is going to be .txt files in a folder that are formatted as follows:
+    # each line is a new token (word) separated from a class label with a tab character.
+    # our preprocessing includes converting to lowercase, splitting into characters, and repeating
+    # the label for each character. Because punctuation counts as a word, we are doing special
+    # rules with adding spaces around punctuation tokens to build a more accurate language model
+
+    def fullClean(s):
+        if (s is None):
+            return ''
+        else:
+            s = s.decode('string_escape', 'ignore')
+            s = s.decode('unicode_escape', 'ignore')
+            s = s.replace(u"\u2018", "'").replace(u"\u2019", "'").replace(u"\u201c", '"').replace(u"\u201d",
+                                                                                                  '"').replace(
+                u"\u00a0", ' ')
+            s = s.replace('\n', '. ')
+            s = s.encode('ascii', 'ignore')
+            s = s.replace('\\,', ',').replace('\t', ' ').replace('\/', '/')
+            s = s.decode('utf-8', 'ignore')
+            s = re.sub('\.?(\.\s)+', '. ', s)
+            s = re.sub('\s+', ' ', s).strip()
+            if s.startswith('"'):
+                s = s[1:]
+            if s.endswith('"'):
+                s = s[:-1]
+            s = s.strip()
+
+            return s
+
+    class StringProcessor:
+        """
+        This is a helper class (normally we would just do functions for preprocessing) to preprocess
+        our text files (line by line) into the appropriate input and target data. The class is used
+        because we needed to keep track of state when processing line by line.
+        """
+        def __init__(self):
+            self.previous_label = ''
+            self.space_before_punct = ['(', '``', '[', '{', '$', '#', '&']
+            self.space_after_punct = ['&']
+            self.previous_char = ''
+
+        def process_line(self, line):
+            chars, label = line.split('\t', 1)
+            chars = chars.lower()
+            label = label.rstrip()
+            labels = [label] * len(chars)
+            if (not chars[0] in string.punctuation or chars[0] in self.space_before_punct) and \
+                    (not self.previous_char in self.space_before_punct or self.previous_char in self.space_after_punct):
+                chars = ' ' + chars
+                if label == self.previous_label:
+                    labels = [label] + labels
+                else:
+                    labels = ['O'] + labels
+
+            self.previous_label = label
+            self.previous_char = chars[-1]
+
+            return chars, labels
+
+        def get_inputs(self, line):
+            return self.process_line(line)[0]
+
+        def get_labels(self, line):
+            return self.process_line(line)[1]
+
+    # now that we defined our preprocessor, create a new TextDataset (works over files)
+    # a TextDataset is an OpenDeep class that creates one-hot encodings of inputs and outputs automatically
+    # and keeps them in vocab and entity_vocab dictionaries.
+    processor = StringProcessor()
+    dataset = TextDataset(path=path_to_data,
+                          inputs_preprocess=lambda line: processor.get_inputs(line),
+                          targets_preprocess=lambda line: processor.get_labels(line),
+                          level="char", sequence_length=120)
+
+    return dataset
 
 
 class OpenNER:
@@ -17,8 +99,18 @@ class OpenNER:
     lstm_file = 'trained_epoch_94.pkl'
 
     def __init__(self):
-        self.vocab = pickle.load(open(self.vocab_file, 'rb'))
-        self.entity_vocab = pickle.load(open(self.entity_vocab_file, 'rb'))
+        # self.vocab = pickle.load(open(self.vocab_file, 'rb'))
+        # self.entity_vocab = pickle.load(open(self.entity_vocab_file, 'rb'))
+
+        self.data = get_dataset()
+        self.vocab = self.data.vocab
+        self.entity_vocab = self.data.label_vocab
+        # save the computed dictionaries to use for converting inputs and outputs from running the model.
+        with open('vocab.pkl', 'wb') as f:
+            pickle.dump(self.data.vocab, f, protocol=pickle.HIGHEST_PROTOCOL)
+        with open('entity_vocab.pkl', 'wb') as f:
+            pickle.dump(self.data.label_vocab, f, protocol=pickle.HIGHEST_PROTOCOL)
+
         self.inverse_vocab = {v: k for k, v in self.vocab.items()}
         self.inverse_entity_vocab = {v: k for k, v in self.entity_vocab.items()}
 
@@ -39,10 +131,41 @@ class OpenNER:
                          cost_function='nll',
                          cost_args={'one_hot': True})
 
-        self.lstm.load_params(self.lstm_file)
+        self.load_params(self.lstm_file)
 
-        # # if you want debugging output from opendeep
-        # opendeep.config_root_logger()
+    def train(self):
+        # train the lstm on our dataset!
+        # let's monitor the error %
+        # output is in shape (n_timesteps, n_sequences, data_dim)
+        # calculate the mean prediction error over timesteps and batches
+        predictions = T.argmax(self.lstm.get_outputs(), axis=2)
+        actual = T.argmax(self.lstm.get_targets()[0].dimshuffle(1, 0, 2), axis=2)
+        char_error = T.mean(T.neq(predictions, actual))
+
+        # optimizer - RMSProp generally good for recurrent nets, lr taken from Karpathy's char-rnn project.
+        # you can also load these configuration arguments from a file or dictionary (parsed from json)
+        optimizer = RMSProp(
+            dataset=self.,
+            epochs=250,
+            batch_size=50,
+            save_freq=10,
+            learning_rate=2e-3,
+            lr_decay="exponential",
+            lr_decay_factor=0.97,
+            decay=0.95,
+            grad_clip=None,
+            hard_clip=False
+        )
+
+        # monitors
+        char_errors = Monitor(name='char_error', expression=char_error, train=True, valid=True, test=True)
+        plot = Plot(monitor_channels=[char_errors], bokeh_doc_name='ner')
+
+        self.lstm.train(optimizer=optimizer, plot=plot)
+
+    def load_params(self, params_file):
+        self.lstm.load_params(params_file)
+
 
     @staticmethod
     def __get_entities(data, predictions, vocab_inv, entity_vocab):
