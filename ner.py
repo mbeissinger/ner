@@ -5,7 +5,7 @@ from __future__ import print_function, division
 # normal imports
 import string
 import numpy
-import pickle
+import cPickle as pickle
 import theano.tensor as T
 import re
 # opendeep imports
@@ -21,29 +21,6 @@ def get_dataset(path_to_data='data/tokenized/'):
     # our preprocessing includes converting to lowercase, splitting into characters, and repeating
     # the label for each character. Because punctuation counts as a word, we are doing special
     # rules with adding spaces around punctuation tokens to build a more accurate language model
-
-    def fullClean(s):
-        if (s is None):
-            return ''
-        else:
-            s = s.decode('string_escape', 'ignore')
-            s = s.decode('unicode_escape', 'ignore')
-            s = s.replace(u"\u2018", "'").replace(u"\u2019", "'").replace(u"\u201c", '"').replace(u"\u201d",
-                                                                                                  '"').replace(
-                u"\u00a0", ' ')
-            s = s.replace('\n', '. ')
-            s = s.encode('ascii', 'ignore')
-            s = s.replace('\\,', ',').replace('\t', ' ').replace('\/', '/')
-            s = s.decode('utf-8', 'ignore')
-            s = re.sub('\.?(\.\s)+', '. ', s)
-            s = re.sub('\s+', ' ', s).strip()
-            if s.startswith('"'):
-                s = s[1:]
-            if s.endswith('"'):
-                s = s[:-1]
-            s = s.strip()
-
-            return s
 
     class StringProcessor:
         """
@@ -99,17 +76,17 @@ class OpenNER:
     lstm_file = 'trained_epoch_94.pkl'
 
     def __init__(self):
-        # self.vocab = pickle.load(open(self.vocab_file, 'rb'))
-        # self.entity_vocab = pickle.load(open(self.entity_vocab_file, 'rb'))
-
-        self.data = get_dataset()
-        self.vocab = self.data.vocab
-        self.entity_vocab = self.data.label_vocab
-        # save the computed dictionaries to use for converting inputs and outputs from running the model.
-        with open('vocab.pkl', 'wb') as f:
-            pickle.dump(self.data.vocab, f, protocol=pickle.HIGHEST_PROTOCOL)
-        with open('entity_vocab.pkl', 'wb') as f:
-            pickle.dump(self.data.label_vocab, f, protocol=pickle.HIGHEST_PROTOCOL)
+        self.vocab = pickle.load(open(self.vocab_file, 'rb'))
+        self.entity_vocab = pickle.load(open(self.entity_vocab_file, 'rb'))
+        #
+        # self.data = get_dataset()
+        # self.vocab = self.data.vocab
+        # self.entity_vocab = self.data.label_vocab
+        # # save the computed dictionaries to use for converting inputs and outputs from running the model.
+        # with open('vocab.pkl', 'wb') as f:
+        #     pickle.dump(self.data.vocab, f, protocol=pickle.HIGHEST_PROTOCOL)
+        # with open('entity_vocab.pkl', 'wb') as f:
+        #     pickle.dump(self.data.label_vocab, f, protocol=pickle.HIGHEST_PROTOCOL)
 
         self.inverse_vocab = {v: k for k, v in self.vocab.items()}
         self.inverse_entity_vocab = {v: k for k, v in self.entity_vocab.items()}
@@ -133,6 +110,8 @@ class OpenNER:
 
         self.load_params(self.lstm_file)
 
+        # self.lstm.save_run('lstm_run.pkl')
+
     def train(self):
         # train the lstm on our dataset!
         # let's monitor the error %
@@ -145,7 +124,7 @@ class OpenNER:
         # optimizer - RMSProp generally good for recurrent nets, lr taken from Karpathy's char-rnn project.
         # you can also load these configuration arguments from a file or dictionary (parsed from json)
         optimizer = RMSProp(
-            dataset=self.,
+            dataset=self.data,
             epochs=250,
             batch_size=50,
             save_freq=10,
@@ -169,6 +148,7 @@ class OpenNER:
 
     @staticmethod
     def __get_entities(data, predictions, vocab_inv, entity_vocab):
+        entity_vocab_inv = {v:k for k,v in entity_vocab.items()}
         # find contiguous entity characters across timesteps
         non_entity_label = entity_vocab.get('O')
         entities = []
@@ -203,7 +183,7 @@ class OpenNER:
                     if entity_string[-1] in string.punctuation:
                         entity_string = entity_string[:-1]
                     # add the entity stripped of whitespace in beginning and end, and reset the string
-                    entities.append(entity_string.strip())
+                    entities.append((entity_string.strip(), entity_vocab_inv.get(label)))
                     entity_string = ""
 
                 previous_label = label
@@ -233,7 +213,6 @@ class OpenNER:
         character_probs = numpy.swapaxes(character_probs, 0, 1)
         # now extract the guessed entities
         predictions = numpy.argmax(character_probs, axis=2)
-        print(predictions)
         entities = self.__get_entities(data, predictions, self.inverse_vocab, self.entity_vocab)
 
         return entities
@@ -259,6 +238,9 @@ def __process_str(data_str, vocab):
     return data
 
 if __name__ == "__main__":
+    print('hi')
+    from opendeep import config_root_logger
+    config_root_logger()
     ner = OpenNER()
     print(ner.predict("does the iphone 6 have good battery compared to the galaxy s6?"))
     print(ner.predict("iphone 8 is a pretty cool phone"))

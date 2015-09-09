@@ -5,7 +5,8 @@ from __future__ import print_function, division
 # normal imports
 import numpy
 import theano.tensor as T
-import pickle
+# import cPickle as pickle
+import cloudpickle as pickle
 import string
 # opendeep imports
 from opendeep.data import TextDataset
@@ -160,7 +161,8 @@ def compile_model_run_fn(model):
 # Step 5: run on real data
 ############
 # parse a string into some input data
-def string_to_data(query, vocab):
+def string_to_data(query):
+    vocab = pickle.load(open('vocab.pkl', 'rb'))
     # process the raw input data string
     data = []
     # get the integer encodings
@@ -175,6 +177,9 @@ def string_to_data(query, vocab):
     data = numpy.reshape(data, (1, seq, dim))
 
     return data
+
+def data_to_str(data, predictions):
+    pass
 
 def run_model(model, data, vocab, label_vocab, compiled_fn_path=None):
     # in our case here, data will be given from the user as a string. we have to process with the encoding
@@ -243,3 +248,62 @@ def run_model(model, data, vocab, label_vocab, compiled_fn_path=None):
     entities = _get_entities(data, predictions, {v:k for k,v in vocab.items()}, label_vocab)
 
     return entities
+
+def postprocess(input, output):
+    vocab = pickle.load(open('vocab.pkl', 'rb'))
+    entity_vocab = pickle.load(open('entity_vocab.pkl', 'rb'))
+    entity_inv = {v:k for k,v in entity_vocab.items()}
+    vocab_inv = {v:k for k,v in vocab.items()}
+
+    # this has the shape (timesteps, batches, data), so swap axes to (batches, timesteps, data)
+    character_probs = numpy.swapaxes(output, 0, 1)
+    # now extract the guessed entities
+    predictions = numpy.argmax(output, axis=2)
+
+    # find contiguous entity characters across timesteps
+    non_entity_label = entity_vocab.get('O')
+    entities = []
+    for i, query in enumerate(predictions):
+        previous_label = non_entity_label
+        entity_string = ""
+        used_indices = set()
+        for j, label in enumerate(query):
+            # find entity start point (expand to space character) and extract the continuous entity
+            if label != non_entity_label and label != previous_label and j not in used_indices:
+                entity_start = j
+                while vocab_inv.get(
+                        numpy.argmax(input[i, entity_start])) not in string.whitespace and entity_start >= 0:
+                    entity_start -= 1
+                # move start point forward one to get out of whitespace or back to 0 index
+                entity_start += 1
+                # now from the start point, extract continuous until whitespace or punctuation
+                entity_idx = entity_start
+                while entity_idx < len(query) and \
+                        (
+                            query[entity_idx] == label or
+                            entity_idx == entity_start or
+                            (
+                                entity_idx > entity_start and
+                                vocab_inv.get(numpy.argmax(input[i, entity_idx])) not in string.whitespace + string.punctuation and
+                                vocab_inv.get(numpy.argmax(input[i, entity_idx - 1])) not in string.whitespace + string.punctuation
+                            )
+                        ):
+                    entity_string += vocab_inv.get(numpy.argmax(input[i, entity_idx]))
+                    used_indices.add(entity_idx)
+                    entity_idx += 1
+                # get rid of trailing matched punctuation
+                if entity_string[-1] in string.punctuation:
+                    entity_string = entity_string[:-1]
+                # add the entity stripped of whitespace in beginning and end, and reset the string
+                entities.append((entity_string.strip(), entity_inv.get(label)))
+                entity_string = ""
+
+            previous_label = label
+    return entities
+
+
+if __name__ == '__main__':
+    with open('input_process.pkl', 'wb') as f:
+        pickle.dump(string_to_data, f)
+    with open('output_process.pkl', 'wb') as f:
+        pickle.dump(postprocess, f)
